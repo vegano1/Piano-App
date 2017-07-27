@@ -11,6 +11,7 @@ import {
   TouchableNativeFeedback
 } from 'react-native';
 
+var scrollDown = 0;
 
 export default class App extends Component {
 
@@ -30,27 +31,66 @@ export default class App extends Component {
          {'name': 'Ann', 'id': 10},
          {'name': 'Steve', 'id': 11},
          {'name': 'Olivia', 'id': 12}
-      ]
-     }
+      ], OffSet : 0,
+        number  : 0,
+     };
+    this.timer = null;
+    this.scrollDown = this.addOne.bind(this);
+    this.scrollUp = this.scrollUp.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+   
+    }
+
+
+
+      stopTimer() {
+        clearTimeout(this.timer);
+      }
+
+      setOffSet(event){this.setState({OffSet : event.nativeEvent.contentOffset.y});
+      console.log(this.state.OffSet);}
+      scrollUp(event, refs, scrollViewRef){ 
+
+
+        
+         this.refs.scrollViewR.scrollTo({  y:  this.state.OffSet-100, animated: true});
+         this.refs.scrollViewM.scrollTo({  y:  this.state.OffSet-100, animated: true});
+         this.refs.scrollViewL.scrollTo({  y:  this.state.OffSet-100, animated: true});
+         
+         this.timer = setTimeout(this.scrollUp, 200);
+
+        //To update the pos of scrollViewR on the screen
+        //  this.setState({
+        //    myText : event.nativeEvent.contentOffset.y
+        //  });
+        
    }
 
-   pressMe1(){
+   scrollDown(event, refs){
+         this.refs.scrollViewR.scrollTo({  y:  this.state.OffSet+100, animated: true});
+         this.refs.scrollViewM.scrollTo({  y:  this.state.OffSet+100, animated: true});
+         this.refs.scrollViewL.scrollTo({  y:  this.state.OffSet+100, animated: true});
+          this.timer = setTimeout(this.scrollDown, 200);
+   }
+
+      addRow(){
        Alert.alert('alerting');
      this.setState({
        names : this.state.names.concat({'name' : 'Brayan', 'id':13})
-     })
+     });
 
      console.log(this.state.names);
    }
 
-      pressMe2(){
+       removeRow(){
        Alert.alert('alerting');
-     this.setState({
-       names : this.state.names.concat({'name' : 'Snow', 'id':14})
-     })
+      this.setState({
+       names : this.state.names.concat({'name' : 'Brayan', 'id':13})
+     });
 
      console.log(this.state.names);
    }
+
   render() {
     return (
          <View >
@@ -61,9 +101,10 @@ export default class App extends Component {
 
           
             <TouchableNativeFeedback  
-            onPress={ this.pressMe1.bind(this) }>
+            onPressIn={(event, refs) => this.scrollUp(event, refs)} 
+            onPressOut={this.stopTimer}>
             <View style = { styles.buttonT }>
-                <Text >Press me!</Text>
+                <Text >Scroll Up</Text>
             </View>
             </TouchableNativeFeedback>
 
@@ -72,11 +113,8 @@ export default class App extends Component {
 
             <ScrollView style = { styles.scrollView }
 
-            ref={ ref => this.ScrollView = ref }
-           
-            onContentSizeChange={(contentWidth, contentHeight)=> {
-            this.ScrollView.scrollTo({x:0, y:0, animated: true}); //use scollTo to controll speed
-            }}
+            ref={'scrollViewL'}
+            scrollEnabled={false}
             >
                {
                   this.state.names.map((item, index) => (
@@ -87,16 +125,15 @@ export default class App extends Component {
                }
                
             </ScrollView>
-                        <ScrollView style={styles.scrollView}
-            ref={ref => this.ScrollView = ref}
-           
-            onContentSizeChange={(contentWidth, contentHeight)=> {
-             this.ScrollView.scrollTo({x:0, y:0, animated: true}); //use scollTo to controll speed
-            }}>
+
+            <ScrollView style={styles.scrollView}
+            ref={'scrollViewM'}
+            scrollEnabled={false}
+            >
                {
                   this.state.names.map((item, index) => (
                      <View key = {item.id} style = { styles.item } >
-                        <Text style = {{alignItems:'center'}}> {item.name}</Text>
+                        <Text style = {{alignItems:'center'}}> {item.name} {this.state.scrollDown}</Text>
                      </View>
                   ))
                }
@@ -104,12 +141,11 @@ export default class App extends Component {
             </ScrollView>
 
             
-                        <ScrollView style={styles.scrollView}
-            ref={ref => this.ScrollView = ref}
-           
-            onContentSizeChange={(contentWidth, contentHeight)=> {
-             this.ScrollView.scrollTo({x:0, y:0, animated: true}); //use scollTo to controll speed
-            }}>
+            <ScrollView style={styles.scrollView}
+            ref='scrollViewR'
+            onScroll  = {(event)=> this.setOffSet(event)}
+            
+            >
                {
                   this.state.names.map((item, index) => (
                      <View key = {item.id} style = { styles.item } >
@@ -117,24 +153,43 @@ export default class App extends Component {
                      </View>
                   ))   
                }
-               
             </ScrollView>
+
             </View>
+            
+                <View style={{height:25}}>
+                  <Text>{this.state.myText}</Text>
+                </View>
 
 
                 <TouchableNativeFeedback  
-                onPress={this.pressMe2.bind(this)}>
+                //onPress={this.handdlePress.bind(this)}>
+                onPressIn={(event, refs) => this.scrollDown(event, refs)} 
+                onPressOut={this.stopTimer}>
+                
+                  
                   <View style={styles.buttonB}>
-                    <Text   >Press me!</Text>
+                    <Text>Scroll Down</Text>
                   </View>
                 </TouchableNativeFeedback>
 
-                </View>
+            </View>
 
          </View>
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 const styles = StyleSheet.create ({
