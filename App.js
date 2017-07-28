@@ -4,11 +4,12 @@ import {
   StyleSheet,
   Text,
   ScrollView,
+  ListView,
   Image,
-  TouchableHighlight,
   View,
   Dimensions,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  Animated,
 } from 'react-native';
 
 var scrollDown = 0;
@@ -17,25 +18,25 @@ export default class App extends Component {
 
    constructor(props){
      super(props);
+     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
      this.state = {
-             names: [
-         {'name': 'Ben', 'id': 1},
-         {'name': 'Susan', 'id': 2},
-         {'name': 'Robert', 'id': 3},
-         {'name': 'Mary', 'id': 4},
-         {'name': 'Daniel', 'id': 5},
-         {'name': 'Laura', 'id': 6},
-         {'name': 'John', 'id': 7},
-         {'name': 'Debra', 'id': 8},
-         {'name': 'Aron', 'id': 9},
-         {'name': 'Ann', 'id': 10},
-         {'name': 'Steve', 'id': 11},
-         {'name': 'Olivia', 'id': 12}
-      ], OffSet : 0,
+       
+         dataSource: ds.cloneWithRows([
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+         ]), 
+        OffSet : 0,
         number  : 0,
      };
     this.timer = null;
-    this.scrollDown = this.addOne.bind(this);
+    this.scrollDown = this.scrollDown.bind(this);
     this.scrollUp = this.scrollUp.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
    
@@ -52,25 +53,37 @@ export default class App extends Component {
       scrollUp(event, refs, scrollViewRef){ 
 
 
-        
-         this.refs.scrollViewR.scrollTo({  y:  this.state.OffSet-100, animated: true});
-         this.refs.scrollViewM.scrollTo({  y:  this.state.OffSet-100, animated: true});
-         this.refs.scrollViewL.scrollTo({  y:  this.state.OffSet-100, animated: true});
-         
+      this.refs.scrollViewL.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
+      this.refs.scrollViewM.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
+      this.refs.scrollViewR.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
+      
+      var mh = new Animated.Value(30);
+      this.setState({OffSet: this.state.OffSet - 100});
+      Animated.timing(mh, {toValue: 200}).start();
+
          this.timer = setTimeout(this.scrollUp, 200);
 
         //To update the pos of scrollViewR on the screen
         //  this.setState({
         //    myText : event.nativeEvent.contentOffset.y
         //  });
+        console.log(this.state.OffSet);
         
    }
 
    scrollDown(event, refs){
-         this.refs.scrollViewR.scrollTo({  y:  this.state.OffSet+100, animated: true});
-         this.refs.scrollViewM.scrollTo({  y:  this.state.OffSet+100, animated: true});
-         this.refs.scrollViewL.scrollTo({  y:  this.state.OffSet+100, animated: true});
-          this.timer = setTimeout(this.scrollDown, 200);
+
+      this.refs.scrollViewL.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
+      this.refs.scrollViewM.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
+      this.refs.scrollViewR.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
+      
+      
+      var mh = new Animated.Value(30);
+      this.setState({OffSet: this.state.OffSet + 100});
+      Animated.timing(mh, {toValue: 200}).start();
+
+      this.timer = setTimeout(this.scrollDown, 200);
+      console.log(this.state.OffSet);
    }
 
       addRow(){
@@ -102,60 +115,40 @@ export default class App extends Component {
           
             <TouchableNativeFeedback  
             onPressIn={(event, refs) => this.scrollUp(event, refs)} 
-            onPressOut={this.stopTimer}>
+            onPressOut={this.stopTimer}
+            >
             <View style = { styles.buttonT }>
                 <Text >Scroll Up</Text>
             </View>
             </TouchableNativeFeedback>
 
             {/* Scrollview */}
-            <View style = {{flexDirection: 'row'}}>
-
-            <ScrollView style = { styles.scrollView }
-
-            ref={'scrollViewL'}
-            scrollEnabled={false}
-            >
-               {
-                  this.state.names.map((item, index) => (
-                     <View key = {item.id} style = { styles.item } >
-                        <Text style = {{alignItems:'center'}}> {item.name}</Text>
-                     </View>
-                  ))   
-               }
-               
-            </ScrollView>
-
-            <ScrollView style={styles.scrollView}
-            ref={'scrollViewM'}
-            scrollEnabled={false}
-            >
-               {
-                  this.state.names.map((item, index) => (
-                     <View key = {item.id} style = { styles.item } >
-                        <Text style = {{alignItems:'center'}}> {item.name} {this.state.scrollDown}</Text>
-                     </View>
-                  ))
-               }
-               
-            </ScrollView>
-
             
-            <ScrollView style={styles.scrollView}
+
+
+
+            <View style ={{flexDirection:'row'}}>
+            <ListView style ={styles.scrollView} 
+            ref='scrollViewL'
+            dataSource={this.state.dataSource}
+            renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
+            >
+            </ListView>
+                        <ListView style ={styles.scrollView} 
+            ref='scrollViewM'
+            dataSource={this.state.dataSource}
+            renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
+            >
+            </ListView>
+                        <ListView style ={styles.scrollView} 
             ref='scrollViewR'
-            onScroll  = {(event)=> this.setOffSet(event)}
-            
+            dataSource={this.state.dataSource}
+            renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
             >
-               {
-                  this.state.names.map((item, index) => (
-                     <View key = {item.id} style = { styles.item } >
-                        <Text style = {{alignItems:'center'}}> {item.name}</Text>
-                     </View>
-                  ))   
-               }
-            </ScrollView>
-
+            </ListView>
             </View>
+
+            
             
                 <View style={{height:25}}>
                   <Text>{this.state.myText}</Text>
@@ -165,7 +158,8 @@ export default class App extends Component {
                 <TouchableNativeFeedback  
                 //onPress={this.handdlePress.bind(this)}>
                 onPressIn={(event, refs) => this.scrollDown(event, refs)} 
-                onPressOut={this.stopTimer}>
+                onPressOut={this.stopTimer}
+                >
                 
                   
                   <View style={styles.buttonB}>
@@ -241,5 +235,9 @@ const styles = StyleSheet.create ({
       backgroundColor: '#FF9900',
    
     },
+
+      rows: {
+
+      }
 })
 
