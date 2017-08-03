@@ -13,95 +13,136 @@ import {
 } from 'react-native';
 
 var scrollDown = 0;
+var momentum = 1;
 
+var Keys = [
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+           'name', 'atributes', 'style',
+         ];
+
+     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 export default class App extends Component {
 
    constructor(props){
      super(props);
-     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
      this.state = {
        
-         dataSource: ds.cloneWithRows([
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-           'name', 'atributes', 'style',
-         ]), 
+        dataSource: ds.cloneWithRows(Keys), 
         OffSet : 0,
-        number  : 0,
+        scroll  : 'null',
      };
+
     this.timer = null;
     this.scrollDown = this.scrollDown.bind(this);
     this.scrollUp = this.scrollUp.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
-   
+    this.scrollEnd = this.scrollEnd.bind(this);
+    this.PauseGame = this.PauseGame.bind(this);
+    this.ResumeGame = this.ResumeGame.bind(this);
     }
 
 
 
       stopTimer() {
         clearTimeout(this.timer);
+        momentum = 1;
       }
 
       setOffSet(event){this.setState({OffSet : event.nativeEvent.contentOffset.y});
-      console.log(this.state.OffSet);}
+      }
+
+
+
       scrollUp(event, refs, scrollViewRef){ 
+      this.setState({scroll: 'up'});
+      if(this.state.OffSet > 0){
 
+        momentum = momentum * 1.3;
 
-      this.refs.scrollViewL.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
-      this.refs.scrollViewM.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
-      this.refs.scrollViewR.scrollTo({y: this.state.OffSet - 100 }, {animated: true});
-      
-      var mh = new Animated.Value(30);
-      this.setState({OffSet: this.state.OffSet - 100});
-      Animated.timing(mh, {toValue: 200}).start();
+        if(momentum > 100){
+          momentum = 100;
+        }
 
-         this.timer = setTimeout(this.scrollUp, 200);
+        this.refs.scrollViewL.scrollTo({y: this.state.OffSet - momentum});
+        this.refs.scrollViewM.scrollTo({y: this.state.OffSet - momentum});
+        this.refs.scrollViewR.scrollTo({y: this.state.OffSet - momentum});
+        this.setState({OffSet: this.state.OffSet - momentum});
+
+        
+        this.timer = setTimeout(this.scrollUp, 10);
 
         //To update the pos of scrollViewR on the screen
         //  this.setState({
         //    myText : event.nativeEvent.contentOffset.y
         //  });
-        console.log(this.state.OffSet);
+        
+        
+      }
+      else{
+        this.setState({ OffSet: 0 });
+        this.stopTimer();
+        console.log('Top Reached');
+      }
+
+
         
    }
 
+
+
    scrollDown(event, refs){
+    // var KeyRow = [];
+    
 
-      this.refs.scrollViewL.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
-      this.refs.scrollViewM.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
-      this.refs.scrollViewR.scrollTo({y: this.state.OffSet + 100 }, {animated: true});
+    // for(var i=0;i<20;i++){
+    // KeyRow[i] = Math.floor(Math.random().toPrecision(1) * 10);
       
-      
-      var mh = new Animated.Value(30);
-      this.setState({OffSet: this.state.OffSet + 100});
-      Animated.timing(mh, {toValue: 200}).start();
 
-      this.timer = setTimeout(this.scrollDown, 200);
-      console.log(this.state.OffSet);
+
+    
+    
+    // }
+
+    this.setState({scroll: 'down'});
+    momentum = momentum * 1.3;
+    if(momentum > 100)
+      momentum = 100;
+
+    this.refs.scrollViewL.scrollTo({y: this.state.OffSet + momentum });
+    this.refs.scrollViewM.scrollTo({y: this.state.OffSet + momentum });
+    this.refs.scrollViewR.scrollTo({y: this.state.OffSet + momentum });
+
+    this.setState({OffSet: this.state.OffSet + momentum});
+
+
+    this.timer = setTimeout(this.scrollDown, 10);
+      
    }
 
-      addRow(){
-       Alert.alert('alerting');
-     this.setState({
-       names : this.state.names.concat({'name' : 'Brayan', 'id':13})
-     });
 
-     console.log(this.state.names);
+   scrollEnd(event){
+         
+        this.setState({OffSet : event.nativeEvent.contentOffset.y });
+        this.stopTimer();
+
+        console.log('End Reached');
    }
 
-       removeRow(){
-       Alert.alert('alerting');
-      this.setState({
-       names : this.state.names.concat({'name' : 'Brayan', 'id':13})
-     });
+   PauseGame(){
 
-     console.log(this.state.names);
+   }
+
+   ResumeGame(){
+    if(this.state.scroll ==='up'){
+      console.log('continue up');
+      this.scrollUp();
+    }
+    else if(this.state.scroll ==='down'){
+      console.log('continue down');
+      this.scrollDown();
+    }
    }
 
   render() {
@@ -113,14 +154,28 @@ export default class App extends Component {
 
 
           
+          <View style ={styles.TopMenu}>
+
             <TouchableNativeFeedback  
-            onPressIn={(event, refs) => this.scrollUp(event, refs)} 
+            onPressIn={(event, refs) =>{}} 
             onPressOut={this.stopTimer}
             >
-            <View style = { styles.buttonT }>
-                <Text >Scroll Up</Text>
+            <View style = { styles.TopMenuItems }>
+                <Text >PauseGame</Text>
             </View>
             </TouchableNativeFeedback>
+
+            <TouchableNativeFeedback  
+            onPressIn={(event, refs) =>this.ResumeGame(event)} 
+            
+            >
+            <View style = { styles.TopMenuItems }>
+                <Text >ResumeGame</Text>
+            </View>
+            </TouchableNativeFeedback>
+
+
+          </View>
 
             {/* Scrollview */}
             
@@ -129,43 +184,56 @@ export default class App extends Component {
 
             <View style ={{flexDirection:'row'}}>
             <ListView style ={styles.scrollView} 
+          
+            onEndReached={(event)=> this.scrollEnd(event)}
+            onEndReachedThreshold={10}
+
             ref='scrollViewL'
             dataSource={this.state.dataSource}
             renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
             >
             </ListView>
-                        <ListView style ={styles.scrollView} 
+
+            <ListView style ={styles.scrollView} 
+            scrollEnabled={false}
             ref='scrollViewM'
             dataSource={this.state.dataSource}
             renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
             >
             </ListView>
-                        <ListView style ={styles.scrollView} 
+
+            <ListView style ={styles.scrollView} 
+            scrollEnabled={false}
             ref='scrollViewR'
             dataSource={this.state.dataSource}
             renderRow={(rowData) => <Text style={styles.item}>{rowData}</Text>}
             >
             </ListView>
+
             </View>
 
-            
-            
-                <View style={{height:25}}>
-                  <Text>{this.state.myText}</Text>
-                </View>
+              <View style={styles.bottomMenu}>
 
-
+            <TouchableNativeFeedback  
+            onPressIn={(event, refs) => this.scrollUp(event, refs)} 
+            
+            >
+            <View style = { styles.bottomMenuItems }>
+                <Text >Scroll Up</Text>
+            </View>
+            </TouchableNativeFeedback>
                 <TouchableNativeFeedback  
                 //onPress={this.handdlePress.bind(this)}>
                 onPressIn={(event, refs) => this.scrollDown(event, refs)} 
-                onPressOut={this.stopTimer}
+                
                 >
                 
                   
-                  <View style={styles.buttonB}>
+                  <View style={styles.bottomMenuItems}>
                     <Text>Scroll Down</Text>
                   </View>
                 </TouchableNativeFeedback>
+              </View>
 
             </View>
 
@@ -212,8 +280,13 @@ const styles = StyleSheet.create ({
       backgroundColor: '#d2f7f1'
    },
 
-      buttonT: {
+      TopMenu: {
+      flexDirection:'row',
+    },
+
+      TopMenuItems: {
       height: Dimensions.get('window').height/8,
+      width: Dimensions.get('window').width/2,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth : 4,
@@ -225,8 +298,13 @@ const styles = StyleSheet.create ({
   
     },
 
-      buttonB: {
+      bottomMenu: {
+      flexDirection:'row',
+    },
+
+      bottomMenuItems: {
       height: Dimensions.get('window').height/8,
+      width: Dimensions.get('window').width/2,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth : 4,
@@ -235,9 +313,5 @@ const styles = StyleSheet.create ({
       backgroundColor: '#FF9900',
    
     },
-
-      rows: {
-
-      }
 })
 
