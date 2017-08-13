@@ -11,6 +11,7 @@ export default StyleSheet.create ({
   },
   scrollView : {
 
+    flex: 1,
       height: Dimensions.get('window').height*0.71,
     
 
@@ -18,12 +19,21 @@ export default StyleSheet.create ({
    item: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      alignContent: 'center',
       height: Dimensions.get('window').height * 0.23,
       
       backgroundColor: 'white',
       borderLeftWidth:1,
+   },
+
+   true : {
+     backgroundColor:'black',
+     height:Dimensions.get('window').height,
+     width:Dimensions.get('window').width
+   },
+   false : {
+     backgroundColor:'white',
+     height:Dimensions.get('window').height,
+     width:Dimensions.get('window').width
    },
 
       TopMenu: {

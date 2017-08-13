@@ -12,13 +12,14 @@ export default class Scroll extends Component{
     constructor(props){
         super(props);
         let data = this.generateKeys();
+        
         this.state = {
             dataSource: ds.cloneWithRows(data), 
             newDataSource : null,
-            itemColor : 'white'
+            itemColor : ''
 
         };
-
+    console.log(this.state.dataSource);
     }
 
 
@@ -58,8 +59,31 @@ generateKeys(){
     return data;
 }
 
+keyColor(rowData){
+if(rowData==1){
+    return {
+
+     backgroundColor:'black',
+     height:Dimensions.get('window').height,
+     width:Dimensions.get('window').width
+    
+    };
+
+}
+else{
+     return {
+
+     backgroundColor:'white',
+     height:Dimensions.get('window').height,
+     width:Dimensions.get('window').width
+    
+    };
+}
+
+}
 
 componentDidMount(props){
+    
     
 
     
@@ -81,7 +105,7 @@ componentDidMount(props){
         });
        }
 
-      console.log(data);
+      console.log(this.props.name + ': ' + data);
    }
 
     render()
@@ -92,6 +116,7 @@ componentDidMount(props){
                 <ListView style ={styles.scrollView} 
                 //onEndReached={this.props.scrollDown}
                 //onEndReachedThreshold={10}
+                scrollEnabled={false}
                 onEndReached={this.props.endReached}
                 onEndReachedThreshold={10}
                 ref='listView'
@@ -105,7 +130,7 @@ componentDidMount(props){
           
                     <View style={[styles.item]}>
 
-                    <View ref='item' style={rowData==1?{backgroundColor:'black',height:Dimensions.get('window').height,width:Dimensions.get('window').width}:{}}>
+                    <View ref='item' style={this.keyColor(rowData)}>
                     <Text> {rowData}</Text>
                     </View>
                     </View>

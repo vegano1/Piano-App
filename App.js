@@ -139,10 +139,10 @@ export default class App extends Component {
             <View style ={{flexDirection:'row'}}>               
 
 
-                <Scroll endReached= {this.stopTimer} scrollPos = {this.state.OffSet} />
-                <Scroll scrollPos = {this.state.OffSet}  />
-                <Scroll scrollPos = {this.state.OffSet}  />
-                <Scroll scrollPos = {this.state.OffSet}  />
+                <Scroll name='1' endReached= {this.stopTimer} scrollPos = {this.state.OffSet} />
+                <Scroll name='2' scrollPos = {this.state.OffSet}  />
+                <Scroll name='3' scrollPos = {this.state.OffSet}  />
+                <Scroll name='4' scrollPos = {this.state.OffSet}  />
 
             </View>
 
