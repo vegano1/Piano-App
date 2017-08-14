@@ -11,18 +11,22 @@ import {
   TouchableNativeFeedback,
   TouchableHighlight,
   Animated,
+  StatusBar,
 } from 'react-native';
 
 import styles from './Styles/Styles';
 import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
 
-var scrollDown = 0;
+
 var momentum = 1;
 
 
 
-
+getData = (val)=>{
+    // do not forget to bind getData in constructor
+    this.scrollDown();
+};
     
 export default class App extends Component {
 
@@ -32,28 +36,23 @@ export default class App extends Component {
 
      this.state = {
        
-        dataSource1 : this.generateKeys(9),
-        dataSource2 : this.generateKeys(9),
-        dataSource3 : this.generateKeys(9),
-        dataSource4 : this.generateKeys(9),
+        dataSource1 : this.generateKeys(19),
+        dataSource2 : this.generateKeys(19),
+        dataSource3 : this.generateKeys(19),
+        dataSource4 : this.generateKeys(19),
 
         OffSet : 0,
         scroll  : 'null',
         direction: '',
+        paused : true,
      };
-
-     console.log(this.state.dataSource1);
-     console.log(this.state.dataSource2);
-     console.log(this.state.dataSource3);
-     console.log(this.state.dataSource4);
-
 
     this.timer = null;
     this.scrollDown = this.scrollDown.bind(this);
     this.scrollUp = this.scrollUp.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
-    this.PauseGame = this.PauseGame.bind(this);
-    this.ResumeGame = this.ResumeGame.bind(this);
+    this.startStop = this.startStop.bind(this);
+    this.resetGame = this.resetGame.bind(this);
     this.generateKeys = this.generateKeys.bind(this);
     }
 
@@ -101,46 +100,55 @@ export default class App extends Component {
 
 
   scrollDown(event, refs){
-    // var KeyRow = [];
-    
 
-    // for(var i=0;i<20;i++){
-    // KeyRow[i] = Math.floor(Math.random().toPrecision(1) * 10);
-    
-    
-    momentum = momentum * 1.3;
-    if(momentum > 50)
-      momentum = 50;
+      momentum = momentum * 1.3;
+      if(momentum > 20)
+        momentum = 20;
 
-
-    this.setState({OffSet: this.state.OffSet + momentum});
-
-
-    this.timer = setTimeout(this.scrollDown, 10);
-
+      this.setState({
+        OffSet: this.state.OffSet + momentum,
+        
+      });
+      this.timer = setTimeout(this.scrollDown, 10);
    }
 
-   PauseGame(){
 
-   }
 
-   ResumeGame(){
-    if(this.state.scroll ==='up'){
-      console.log('continue up');
-      this.scrollUp();
-    }
-    else if(this.state.scroll ==='down'){
-      console.log('continue down');
+   startStop(){
+    let newValue = !this.state.paused;
+    this.setState({paused : newValue});
+    if(!newValue){
+
+      console.log('scrolling');
       this.scrollDown();
     }
+    else{
+      console.log('paused');
+      this.stopTimer();
+  }
+   }
+
+   resetGame(){
+     
+     this.stopTimer();
+     
+     this.setState({
+        dataSource1 : this.generateKeys(19),
+        dataSource2 : this.generateKeys(19),
+        dataSource3 : this.generateKeys(19),
+        dataSource4 : this.generateKeys(19),
+        OffSet : 0,
+        paused : true,
+     });
+      
    }
 
 generateKeys(totalKeys){
     
-    let arr = [];
+    let arr = [0,0,0];
     let current;
     
-    for(var i=0;i<totalKeys;i++){
+    for(var i = arr.length + 1 ; i < totalKeys ; i++){
     current = Math.floor(Math.random().toPrecision(1) * 9);
     
 
@@ -173,43 +181,45 @@ generateKeys(totalKeys){
 }
 
 
+
+
   render() {
     return (
-         <View>
-           <View style={{height:25}}></View>
+      
+         <View style={styles.container}>
+           <StatusBar hidden={true} />
+           
 
-           <View style={styles.TopMenu}>
+           {/* <View style={styles.TopMenu}>
 
              <MenuButton name='Stop'
              Action={this.PauseGame}
              />
              <MenuButton name='Resume'/>
 
-           </View>
+           </View> */}
 
             <View style ={{flexDirection:'row'}}>               
 
 
-                <Scroll name='1' dataSource={this.state.dataSource1} endReached= {this.stopTimer} scrollPos = {this.state.OffSet} />
+                <Scroll start={()=>this.scrollDown} dataSource={this.state.dataSource1} endReached= {this.stopTimer} scrollPos = {this.state.OffSet} />
                 <Scroll name='2' dataSource={this.state.dataSource2} scrollPos = {this.state.OffSet}  />
                 <Scroll name='3' dataSource={this.state.dataSource3} scrollPos = {this.state.OffSet}  />
                 <Scroll name='4' dataSource={this.state.dataSource4} scrollPos = {this.state.OffSet}  />
 
             </View>
 
-            <View style={styles.bottomMenu}>
+             <View style={styles.bottomMenu}>
 
-             <MenuButton name='Scroll Down'
-             Action={this.scrollDown}
+             <MenuButton name='Pause/Resume'
+             Action={this.startStop}
              />
-
-
-             <MenuButton name='Scroll Up'
-             Action={this.scrollUp}
+             <MenuButton name='Reset'
+             Action={this.resetGame}
              />
+           </View> 
 
-             
-           </View>
+           
          </View>
     );
   }

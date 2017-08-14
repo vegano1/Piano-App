@@ -17,7 +17,7 @@ export default class MenuButton extends Component{
             
             >
 
-                <View style = { styles.TopMenuItems }>
+                <View style = { styles.MenuButton }>
                     <Text> {this.props.name} </Text>
                 </View>
             

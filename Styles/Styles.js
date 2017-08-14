@@ -3,16 +3,16 @@ import {StyleSheet, Dimensions} from 'react-native';
 
 export default StyleSheet.create ({
   container: {
-      borderWidth : 2,
-      borderColor : 'black',
-      backgroundColor : 'red',
+
+      
 
 
   },
   scrollView : {
 
     flex: 1,
-      height: Dimensions.get('window').height*0.71,
+      height: Dimensions.get('window').height*0.94,
+      
     
 
     },
@@ -20,21 +20,22 @@ export default StyleSheet.create ({
       flexDirection: 'row',
       justifyContent: 'space-between',
       height: Dimensions.get('window').height * 0.23,
-      
-      backgroundColor: 'white',
-      borderLeftWidth:1,
+      borderLeftWidth:0.3,
    },
 
-   true : {
-     backgroundColor:'black',
-     height:Dimensions.get('window').height,
-     width:Dimensions.get('window').width
-   },
-   false : {
-     backgroundColor:'white',
-     height:Dimensions.get('window').height,
-     width:Dimensions.get('window').width
-   },
+      MenuButton: {
+
+      height: Dimensions.get('window').height/15,
+      width: Dimensions.get('window').width/2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth : 1,
+      borderLeftWidth : 1,
+      borderRightWidth : 1,
+      borderColor: 'black',
+
+      backgroundColor : '#0097A7'
+    },
 
       TopMenu: {
       flexDirection:'row',
@@ -60,7 +61,6 @@ export default StyleSheet.create ({
 
       bottomMenuItems: {
       height: Dimensions.get('window').height/8,
-      width: Dimensions.get('window').width/2,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth : 1,

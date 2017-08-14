@@ -15,7 +15,7 @@ export default class Scroll extends Component{
         this.state = {
             dataSource: ds.cloneWithRows(this.props.dataSource), 
             newDataSource : null,
-            itemColor : ''
+            start : false,
 
         };
     
@@ -29,9 +29,12 @@ keyColor(rowData){
 if(rowData==1){
     return {
 
-     backgroundColor:'black',
+     backgroundColor:'#0288D1',
      height:Dimensions.get('window').height,
-     width:Dimensions.get('window').width
+     width:Dimensions.get('window').width,
+     borderTopWidth : 0.3,
+
+     borderColor : '#B3E5FC',
     
     };
 
@@ -39,7 +42,7 @@ if(rowData==1){
 else{
      return {
 
-     backgroundColor:'white',
+     backgroundColor:'#B3E5FC',
      height:Dimensions.get('window').height,
      width:Dimensions.get('window').width
     
@@ -47,20 +50,22 @@ else{
 }
 
 }
+    componentWillReceiveProps(nextProps){
+        
+            this.setState({
+            dataSource : ds.cloneWithRows(nextProps.dataSource)
+            });   
+   
+    }
 
-componentDidMount(props){
-    
-    
 
-    
-
-}
    componentDidUpdate(nextProps, props){
 
-                this.refs.listView.scrollTo({y : this.props.scrollPos});
+       this.refs.listView.scrollTo({y : this.props.scrollPos});
    }
 
    handlePress(sectionID){
+
        let data = this.props.dataSource;
        if(data[sectionID]==1){
 
@@ -72,7 +77,7 @@ componentDidMount(props){
         });
        }
 
-      console.log(this.props.name + ': ' + data);
+      
    }
 
     render()
@@ -83,7 +88,7 @@ componentDidMount(props){
                 <ListView style ={styles.scrollView} 
                 //onEndReached={this.props.scrollDown}
                 //onEndReachedThreshold={10}
-                //scrollEnabled={false}
+                scrollEnabled={false}
                 onEndReached={this.props.endReached}
                 onEndReachedThreshold={10}
                 ref='listView'
@@ -92,13 +97,16 @@ componentDidMount(props){
                 renderRow={(rowData, rowID, sectionID) => 
                 
                 <TouchableNativeFeedback
-                onPress={()=>this.handlePress(sectionID)}
+                
+                onPressIn={()=>this.handlePress(sectionID)}
+              
+                
                 >
           
                     <View style={[styles.item]}>
 
                     <View ref='item' style={this.keyColor(rowData)}>
-                    <Text> {rowData}</Text>
+                    
                     </View>
                     </View>
                 
