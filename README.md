@@ -6,8 +6,8 @@ Piano touch app in react native.
 
 [Features]
 
-- Randomly generated piano keys
-- Conditional rendering based on datasource
-- Tiles turn from black to white when pressed
-- Autoscroll when app starts 
+- Randomly generated tiles
+- Autoscroll when first tile is clicked 
 - Pause and resume buttons
+- Reset button, which generates new tile list
+
