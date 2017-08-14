@@ -5,59 +5,25 @@ import styles from '../Styles/Styles';
 
 
 
-var data = [];
+
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 export default class Scroll extends Component{
     constructor(props){
         super(props);
-        let data = this.generateKeys();
         
         this.state = {
-            dataSource: ds.cloneWithRows(data), 
+            dataSource: ds.cloneWithRows(this.props.dataSource), 
             newDataSource : null,
             itemColor : ''
 
         };
-    console.log(this.state.dataSource);
+    
     }
 
 
 
-generateKeys(){
-    
-    let current;
-    for(var i=0;i<9;i++){
-    current = Math.floor(Math.random().toPrecision(1) * 9);
-    
 
-        switch(current){
-            case 0: data[i] = 0;
-            break;
-            case 1: data[i] = 1;
-            break;
-            case 2: data[i] = 0;
-            break;
-            case 3: data[i] = 0;
-            break;
-            case 4: data[i] = 1;
-            break;
-            case 5: data[i] = 1;
-            break;
-            case 6: data[i] = 1;
-            break;
-            case 7: data[i] = 1;
-            break;
-            case 8: data[i] = 0;
-            break;
-            case 9: data[i] = 1;
-            break;
-        }
-    }
-    
-    
-    return data;
-}
 
 keyColor(rowData){
 if(rowData==1){
@@ -95,6 +61,7 @@ componentDidMount(props){
    }
 
    handlePress(sectionID){
+       let data = this.props.dataSource;
        if(data[sectionID]==1){
 
         data.splice(sectionID, 1, 0);
@@ -116,7 +83,7 @@ componentDidMount(props){
                 <ListView style ={styles.scrollView} 
                 //onEndReached={this.props.scrollDown}
                 //onEndReachedThreshold={10}
-                scrollEnabled={false}
+                //scrollEnabled={false}
                 onEndReached={this.props.endReached}
                 onEndReachedThreshold={10}
                 ref='listView'
