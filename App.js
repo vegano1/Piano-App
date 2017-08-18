@@ -38,7 +38,7 @@ export default class App extends Component {
 
         OffSet : 0,
         scroll  : 'null',
-        direction: '',
+        pressed : false,
         paused : true,
      };
 
@@ -202,10 +202,21 @@ endReached(data){
             <View style ={{flexDirection:'row'}}>               
 
 
-                <Scroll reached = {this.endReached} dataSource={this.state.dataSource1}  scrollPos = {this.state.OffSet} />
-                <Scroll  dataSource={this.state.dataSource2} scrollPos = {this.state.OffSet}  />
-                <Scroll ref='listView3' dataSource={this.state.dataSource3} scrollPos = {this.state.OffSet}  />
-                <Scroll name='4' dataSource={this.state.dataSource4} scrollPos = {this.state.OffSet}  />
+                <Scroll Action={this.scrollDown} 
+                dataSource={this.state.dataSource1}  
+                scrollPos = {this.state.OffSet} />
+
+                <Scroll Action={this.scrollDown}  
+                dataSource={this.state.dataSource2} 
+                scrollPos = {this.state.OffSet}  />
+
+                <Scroll Action={this.scrollDown} 
+                dataSource={this.state.dataSource3} 
+                scrollPos = {this.state.OffSet}  />
+
+                <Scroll Action={this.scrollDown} 
+                dataSource={this.state.dataSource4} 
+                scrollPos = {this.state.OffSet}  />
 
             </View>
 

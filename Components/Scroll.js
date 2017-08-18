@@ -9,14 +9,16 @@ var RCTUIManager = require('NativeModules').UIManager;
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
+
 export default class Scroll extends Component{
     constructor(props){
         super(props);
-        this._data = [];
+        
         this.state = {
             dataSource: ds.cloneWithRows(this.props.dataSource), 
             newDataSource : null,
             start : false,
+            pressed : false,
             
 
         };
@@ -75,19 +77,29 @@ else{
        this.refs.listView.scrollTo({y : this.props.scrollPos});
    }
 
-   handlePress(sectionID){
+   handlePress(sectionID,rowID){
 
        let data = this.props.dataSource;
-       console.log(data[sectionID]);
-       if(data[sectionID]==1){
-        console.log(data[sectionID]);
+       
+        console.log(data[-1]);
+
+        
+       if(data[sectionID]==1 && data.indexOf(data[sectionID])==1){
+           //console.log(data[1]);
+          this.props.Action();
+          this.setState({pressed : true});
+       }
+        
+        if(data[sectionID]==1){
         data.splice(sectionID, 1, 0);
 
         let newDataSource = ds.cloneWithRows(data);
         this.setState({
             dataSource : newDataSource,
         });
-       }
+        }
+
+       
 
       
    }
@@ -110,8 +122,8 @@ else{
                 
                 <TouchableNativeFeedback
                 
-                onPress={()=>this.handlePress(sectionID)}
-              
+                onPress={()=>this.handlePress(sectionID,rowID)}
+                    
                 
                 >
           
