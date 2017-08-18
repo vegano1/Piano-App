@@ -12,6 +12,7 @@ import {
   TouchableHighlight,
   Animated,
   StatusBar,
+  
 } from 'react-native';
 
 import styles from './Styles/Styles';
@@ -19,27 +20,21 @@ import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
 
 
+
 var momentum = 1;
-
-
-
-getData = (val)=>{
-    // do not forget to bind getData in constructor
-    this.scrollDown();
-};
     
 export default class App extends Component {
 
    constructor(props){
      super(props);
-
-
+  
+   
      this.state = {
        
-        dataSource1 : this.generateKeys(19),
-        dataSource2 : this.generateKeys(19),
-        dataSource3 : this.generateKeys(19),
-        dataSource4 : this.generateKeys(19),
+        dataSource1 : this.generateKeys(9),
+        dataSource2 : this.generateKeys(9),
+        dataSource3 : this.generateKeys(9),
+        dataSource4 : this.generateKeys(9),
 
         OffSet : 0,
         scroll  : 'null',
@@ -54,6 +49,7 @@ export default class App extends Component {
     this.startStop = this.startStop.bind(this);
     this.resetGame = this.resetGame.bind(this);
     this.generateKeys = this.generateKeys.bind(this);
+    this.endReached = this.endReached.bind(this);
     }
 
 
@@ -102,8 +98,8 @@ export default class App extends Component {
   scrollDown(event, refs){
 
       momentum = momentum * 1.3;
-      if(momentum > 20)
-        momentum = 20;
+      if(momentum > 40)
+        momentum = 40;
 
       this.setState({
         OffSet: this.state.OffSet + momentum,
@@ -115,6 +111,7 @@ export default class App extends Component {
 
 
    startStop(){
+     
     let newValue = !this.state.paused;
     this.setState({paused : newValue});
     if(!newValue){
@@ -133,10 +130,10 @@ export default class App extends Component {
      this.stopTimer();
      
      this.setState({
-        dataSource1 : this.generateKeys(19),
-        dataSource2 : this.generateKeys(19),
-        dataSource3 : this.generateKeys(19),
-        dataSource4 : this.generateKeys(19),
+        dataSource1 : this.generateKeys(9),
+        dataSource2 : this.generateKeys(9),
+        dataSource3 : this.generateKeys(9),
+        dataSource4 : this.generateKeys(9),
         OffSet : 0,
         paused : true,
      });
@@ -145,10 +142,10 @@ export default class App extends Component {
 
 generateKeys(totalKeys){
     
-    let arr = [0,0,0];
+    let arr= [0];
     let current;
     
-    for(var i = arr.length + 1 ; i < totalKeys ; i++){
+    for(var i = 1 ; i < totalKeys ; i++){
     current = Math.floor(Math.random().toPrecision(1) * 9);
     
 
@@ -175,11 +172,14 @@ generateKeys(totalKeys){
             break;
         }
     }
-    
-    
+  
+
     return arr;
 }
 
+endReached(data){
+  console.log(data);
+}
 
 
 
@@ -202,9 +202,9 @@ generateKeys(totalKeys){
             <View style ={{flexDirection:'row'}}>               
 
 
-                <Scroll start={()=>this.scrollDown} dataSource={this.state.dataSource1} endReached= {this.stopTimer} scrollPos = {this.state.OffSet} />
-                <Scroll name='2' dataSource={this.state.dataSource2} scrollPos = {this.state.OffSet}  />
-                <Scroll name='3' dataSource={this.state.dataSource3} scrollPos = {this.state.OffSet}  />
+                <Scroll reached = {this.endReached} dataSource={this.state.dataSource1}  scrollPos = {this.state.OffSet} />
+                <Scroll  dataSource={this.state.dataSource2} scrollPos = {this.state.OffSet}  />
+                <Scroll ref='listView3' dataSource={this.state.dataSource3} scrollPos = {this.state.OffSet}  />
                 <Scroll name='4' dataSource={this.state.dataSource4} scrollPos = {this.state.OffSet}  />
 
             </View>
