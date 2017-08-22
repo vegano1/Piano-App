@@ -18,7 +18,7 @@ export default class MenuButton extends Component{
             >
 
                 <View style = { styles.MenuButton }>
-                    <Text> {this.props.name} </Text>
+                    <Text style={{fontSize : 15}} > {this.props.name} </Text>
                 </View>
             
             </TouchableNativeFeedback>

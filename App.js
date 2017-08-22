@@ -12,6 +12,7 @@ import {
   TouchableHighlight,
   Animated,
   StatusBar,
+  ToastAndroid
   
 } from 'react-native';
 
@@ -31,15 +32,18 @@ export default class App extends Component {
    
      this.state = {
        
-        dataSource1 : this.generateKeys(9),
-        dataSource2 : this.generateKeys(9),
-        dataSource3 : this.generateKeys(9),
-        dataSource4 : this.generateKeys(9),
+        dataSource1 : this.generateKeys(19),
+        dataSource2 : this.generateKeys(19),
+        dataSource3 : this.generateKeys(19),
+        dataSource4 : this.generateKeys(19),
 
         OffSet : 0,
         scroll  : 'null',
-        pressed : false,
+        firstTile : false,
         paused : true,
+        pausedSymbol : '►',
+        score : 1,
+
      };
 
     this.timer = null;
@@ -49,6 +53,7 @@ export default class App extends Component {
     this.startStop = this.startStop.bind(this);
     this.resetGame = this.resetGame.bind(this);
     this.generateKeys = this.generateKeys.bind(this);
+    this.startScroll = this.startScroll.bind(this);
     this.endReached = this.endReached.bind(this);
     }
 
@@ -57,7 +62,6 @@ export default class App extends Component {
       stopTimer() {
         clearTimeout(this.timer);
         momentum = 1;
-        console.log('pause');
       }
 
 
@@ -98,31 +102,36 @@ export default class App extends Component {
   scrollDown(event, refs){
 
       momentum = momentum * 1.3;
-      if(momentum > 40)
-        momentum = 40;
+      if(momentum > 15)
+        momentum = 15;
 
       this.setState({
         OffSet: this.state.OffSet + momentum,
         
       });
-      this.timer = setTimeout(this.scrollDown, 10);
+      this.timer = setTimeout(this.scrollDown, 3);
    }
 
 
 
    startStop(){
-     
-    let newValue = !this.state.paused;
-    this.setState({paused : newValue});
-    if(!newValue){
-
-      console.log('scrolling');
-      this.scrollDown();
-    }
-    else{
-      console.log('paused');
+     if(this.state.firstTile){
       this.stopTimer();
-  }
+
+        let newValue = !this.state.paused;
+        
+        if(newValue){
+    
+          console.log('scrolling');
+          this.scrollDown();
+          this.setState({paused : newValue, pausedSymbol: '||'});
+        }
+        else{
+          console.log('paused');
+          this.stopTimer();
+          this.setState({paused : newValue, pausedSymbol : '►'});
+      }
+    }
    }
 
    resetGame(){
@@ -130,19 +139,22 @@ export default class App extends Component {
      this.stopTimer();
      
      this.setState({
-        dataSource1 : this.generateKeys(9),
-        dataSource2 : this.generateKeys(9),
-        dataSource3 : this.generateKeys(9),
-        dataSource4 : this.generateKeys(9),
+        dataSource1 : this.generateKeys(19),
+        dataSource2 : this.generateKeys(19),
+        dataSource3 : this.generateKeys(19),
+        dataSource4 : this.generateKeys(19),
         OffSet : 0,
         paused : true,
+        pausedSymbol : '►',
+        firstTile : false,
+        score : 0
      });
       
    }
 
 generateKeys(totalKeys){
     
-    let arr= [0];
+    let arr= ['*'];
     let current;
     
     for(var i = 1 ; i < totalKeys ; i++){
@@ -172,14 +184,30 @@ generateKeys(totalKeys){
             break;
         }
     }
-  
 
+    arr.push(0,0,0);
+  
+    
     return arr;
 }
 
-endReached(data){
-  console.log(data);
+startScroll(){
+
+  
+  this.setState({count : this.state.score++});
+
+  if(!this.state.firstTile && this.state.paused){
+    this.stopTimer();
+    this.setState({firstTile : true, pausedSymbol : '||'});
+    this.scrollDown();
+  }
 }
+
+endReached(){
+  this.stopTimer();
+  ToastAndroid.show('Your Score is: ' + this.state.score, 1);
+}
+
 
 
 
@@ -188,41 +216,36 @@ endReached(data){
       
          <View style={styles.container}>
            <StatusBar hidden={true} />
-           
-
-           {/* <View style={styles.TopMenu}>
-
-             <MenuButton name='Stop'
-             Action={this.PauseGame}
-             />
-             <MenuButton name='Resume'/>
-
-           </View> */}
 
             <View style ={{flexDirection:'row'}}>               
 
 
-                <Scroll Action={this.scrollDown} 
+                <Scroll Action={this.startScroll} 
+                stopGame = {this.endReached}
+                endReached = {this.endReached}
                 dataSource={this.state.dataSource1}  
                 scrollPos = {this.state.OffSet} />
 
-                <Scroll Action={this.scrollDown}  
+                <Scroll Action={this.startScroll}
+                stopGame = {this.endReached}
                 dataSource={this.state.dataSource2} 
                 scrollPos = {this.state.OffSet}  />
 
-                <Scroll Action={this.scrollDown} 
+                <Scroll Action={this.startScroll}
+                stopGame = {this.endReached}
                 dataSource={this.state.dataSource3} 
                 scrollPos = {this.state.OffSet}  />
 
-                <Scroll Action={this.scrollDown} 
+                <Scroll Action={this.startScroll}
+                stopGame = {this.endReached}
                 dataSource={this.state.dataSource4} 
                 scrollPos = {this.state.OffSet}  />
 
             </View>
 
-             <View style={styles.bottomMenu}>
+             <View style={styles.bottomMenuContainer}>
 
-             <MenuButton name='Pause/Resume'
+             <MenuButton name={this.state.pausedSymbol}
              Action={this.startStop}
              />
              <MenuButton name='Reset'

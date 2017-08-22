@@ -23,35 +23,40 @@ export default class Scroll extends Component{
 
         };
     
+        this.startGame = this.startGame.bind(this);
     }
 
 
-
-
-
 keyColor(rowData){
-if(rowData==1){
-    return {
 
-     backgroundColor:'#0288D1',
-     height:Dimensions.get('window').height,
-     width:Dimensions.get('window').width,
-     borderTopWidth : 0.3,
-
-     borderColor : '#B3E5FC',
-    
-    };
-
-}
-else{
-     return {
-
-     backgroundColor:'#B3E5FC',
-     height:Dimensions.get('window').height,
-     width:Dimensions.get('window').width
-    
-    };
-}
+    switch(rowData){
+        case 1 : 
+        return {
+            flex : 1,  
+            borderRadius : 15,
+            borderWidth : 1,
+            backgroundColor :'#0288D1',
+            borderColor : '#B3E5FC',
+            shadowRadius: 2,
+            elevation: 2,
+            alignItems : 'center',
+            justifyContent : 'center'
+            
+            };
+        case 2 :
+        return {
+            flex : 1,  
+            borderRadius : 15,
+            borderWidth : 1,
+            backgroundColor :'red',
+            borderColor : '#B3E5FC',
+            shadowRadius: 2,
+            elevation: 2,
+            
+            };
+            
+            
+    }
 
 }
 
@@ -65,43 +70,64 @@ else{
 
     componentWillReceiveProps(nextProps){
         
-            this.setState({
-            dataSource : ds.cloneWithRows(nextProps.dataSource)
-            });   
+    this.setState({
+    dataSource : ds.cloneWithRows(nextProps.dataSource)
+    });   
    
     }
 
 
    componentDidUpdate(nextProps, props){
 
-       this.refs.listView.scrollTo({y : this.props.scrollPos});
+   this.refs.listView.scrollTo({y : this.props.scrollPos});
    }
 
    handlePress(sectionID,rowID){
 
        let data = this.props.dataSource;
-       
-        console.log(data[-1]);
-
         
-       if(data[sectionID]==1 && data.indexOf(data[sectionID])==1){
-           //console.log(data[1]);
-          this.props.Action();
-          this.setState({pressed : true});
-       }
-        
-        if(data[sectionID]==1){
-        data.splice(sectionID, 1, 0);
+        if(data[sectionID]==0){
 
-        let newDataSource = ds.cloneWithRows(data);
-        this.setState({
-            dataSource : newDataSource,
-        });
+            data.splice(sectionID, 1, 2);
+            let newDataSource = ds.cloneWithRows(data);
+            this.setState({
+                dataSource : newDataSource,
+            });
+            this.props.stopGame();
+
+        }
+        else{
+
+            data.splice(sectionID, 1, 0);
+            let newDataSource = ds.cloneWithRows(data);
+            this.setState({
+                dataSource : newDataSource,
+            });
+            this.props.Action();
         }
 
-       
+   }
 
-      
+   startGame(rowData, sectionID){
+       
+       if(rowData==1 && sectionID==1){
+           
+           return (
+
+               <Text 
+               style={{
+                   flex : 1,
+                   fontSize: 30, 
+                   fontWeight: 'bold',
+                   lineHeight : 90
+
+                   
+                   }}
+               
+               >Start</Text>
+           )
+           
+       }
    }
 
 
@@ -115,6 +141,9 @@ else{
                 renderScrollComponent={(props,sectionID) => 
                 <InvertibleScrollView {...props} inverted />}
                
+                scrollEnabled={false}
+                onEndReached={this.props.endReached}
+                onEndReachedThreshold={10}
                 ref='listView'
                 showsVerticalScrollIndicator={false}
                 dataSource={this.state.dataSource}
@@ -123,22 +152,19 @@ else{
                 <TouchableNativeFeedback
                 
                 onPress={()=>this.handlePress(sectionID,rowID)}
-                    
-                
                 >
           
                     <View style={[styles.item]}>
 
                     <View ref='item' style={this.keyColor(rowData)}>
-                    <Text>{rowData}</Text>
+                    {this.startGame(rowData, sectionID)}
                     </View>
                     </View>
-                
 
                 </TouchableNativeFeedback>
 
-                
                 }>
+
                 </ListView>
 
           

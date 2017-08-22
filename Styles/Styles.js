@@ -3,7 +3,7 @@ import {StyleSheet, Dimensions} from 'react-native';
 
 export default StyleSheet.create ({
   container: {
-
+backgroundColor: '#B3E5FC'
       
 
 
@@ -11,7 +11,7 @@ export default StyleSheet.create ({
   scrollView : {
 
     flex: 1,
-      height: Dimensions.get('window').height*0.94,
+      height: Dimensions.get('window').height,
       
     
 
@@ -25,48 +25,38 @@ export default StyleSheet.create ({
 
       MenuButton: {
 
-      height: Dimensions.get('window').height/15,
-      width: Dimensions.get('window').width/2,
-      alignItems: 'center',
+      height: Dimensions.get('window').height/14,
+      width: Dimensions.get('window').width/8,
       justifyContent: 'center',
-      borderWidth : 1,
-      borderLeftWidth : 1,
-      borderRightWidth : 1,
-      borderColor: 'black',
-
-      backgroundColor : '#0097A7'
-    },
-
-      TopMenu: {
-      flexDirection:'row',
-    },
-
-      TopMenuItems: {
-      height: Dimensions.get('window').height/8,
-      width: Dimensions.get('window').width/2,
       alignItems: 'center',
-      justifyContent: 'center',
-      borderWidth : 1,
-      borderLeftWidth : 1,
-      borderRightWidth : 1,
-      borderColor: 'black',
-      backgroundColor: '#FF9900',
-
-  
-    },
-
-      bottomMenu: {
-      flexDirection:'row',
-    },
-
-      bottomMenuItems: {
-      height: Dimensions.get('window').height/8,
-      alignItems: 'center',
-      justifyContent: 'center',
       borderWidth : 1,
       borderColor: 'black',
-      backgroundColor: '#FF9900',
-   
+      borderRadius : 5,
+
+      backgroundColor : '#0097A7',
+      
+    },
+
+      bottomMenuContainer: {
+      flexDirection: 'row',
+      position : 'absolute',
+      bottom : 10,
+      left : 10,
+      
+
+      borderWidth : 2,
+      borderColor : 'black',
+      borderRadius : 5,
+
+      backgroundColor : 'black',
+
+      shadowRadius: 5,
+      elevation: 3,
+
+
+
+
+      
     },
 });
 
