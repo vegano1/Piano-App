@@ -8,6 +8,9 @@ Piano touch app in react native.
 
 - Randomly generated tiles
 - Autoscroll when first tile is clicked 
-- Pause and resume buttons
-- Reset button, which generates new tile list
+- Pause and resume 
+- Reset to generate new tiles
+- Game resets when clicked on empty tile
+- See your score at at end of the round
+
 
