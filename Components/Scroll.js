@@ -51,10 +51,10 @@ export default class Scroll extends Component {
 
     }
 
-    componentDidMount(props) {
+    // componentDidMount(props) {
          
         
-    }
+    // }
 
 
 
@@ -74,7 +74,7 @@ export default class Scroll extends Component {
     }
 
     handlePress(sectionID, rowID) {
-        console.log(this.state.paused);
+
         let data = this.props.dataSource;
 
         if (data[sectionID] == 0) {

@@ -240,7 +240,7 @@ export default class App extends Component {
             mode='dropdown'
             prompt="testing"
             selectedValue={this.state.language}
-            onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
+            >
             <Picker.Item label="easy" value="1" />
             <Picker.Item label="medium" value="2" />
             <Picker.Item label="hard" value="3" />
