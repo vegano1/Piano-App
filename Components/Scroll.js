@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { AppRegistry, View, Text, TouchableNativeFeedback, ListView, Dimensions } from 'react-native';
+import { 
+    AppRegistry, 
+    View, 
+    Text, 
+    TouchableNativeFeedback, 
+    ListView, 
+    Dimensions,
+    
+ } from 'react-native';
 import styles from '../Styles/Styles';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 
@@ -29,9 +37,9 @@ export default class Scroll extends Component {
                 return {
                     flex: 1,
                     borderRadius: 15,
-                    borderWidth: 1,
+                    borderWidth: 0.3,
                     backgroundColor: '#0288D1',
-                    borderColor: '#B3E5FC',
+                    borderColor: 'black',
                     alignItems: 'center',
 
 
@@ -109,6 +117,7 @@ export default class Scroll extends Component {
                         flex: 1,
                         fontSize: 30,
                         fontWeight: 'bold',
+                        color : '#0D47A1',
                         lineHeight: 90
 
 

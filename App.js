@@ -12,10 +12,33 @@ import {
 import styles from './Styles/Styles';
 import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
+import Hearts from './Components/Hearts';
+//import Sound from 'react-native-sound';
 
+// Import the react-native-sound module
+
+// Load the sound file 'whoosh.mp3' from the app bundle
+// See notes below about preloading sounds within initialization code below.
+// var ding = new Sound('./assets/sounds/ding.wav', Sound.MAIN_BUNDLE, (error) => {
+//   if (error) {
+//     console.log('failed to load the sound', error);
+//     return;
+//   }
+//     // loaded successfully
+//     console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+//   });
 
 
 var momentum = 1;
+var icon = [
+  require('./assets/icons/heart.png'),
+  require('./assets/icons/restart.png'),
+  require('./assets/icons/settings.png'),
+  require('./assets/icons/play.png'),
+  require('./assets/icons/pause.png'),
+  require('./assets/icons/trophy.png'),
+
+];
 
 export default class App extends Component {
 
@@ -33,8 +56,9 @@ export default class App extends Component {
       OffSet: 0,
       firstTile: false,
       paused: true,
-      pausedSymbol: '►',
+      pausedSymbol: icon[3],
       score: 0,
+      disableButton : false
 
     };
 
@@ -109,11 +133,11 @@ export default class App extends Component {
       if (newValue) {
 
         this.scrollDown();
-        this.setState({ paused: newValue, pausedSymbol: '||' });
+        this.setState({ paused: newValue, pausedSymbol: icon[3] });
       }
       else {
         this.stopTimer();
-        this.setState({ paused: newValue, pausedSymbol: '►' });
+        this.setState({ paused: newValue, pausedSymbol: icon[4] });
       }
     }
   }
@@ -129,9 +153,10 @@ export default class App extends Component {
       dataSource4: this.generateKeys(19),
       OffSet: 0,
       paused: true,
-      pausedSymbol: '►',
+      pausedSymbol: icon[3],
       firstTile: false,
-      score: 0
+      score: 0,
+      disableButton : false
     });
 
   }
@@ -175,18 +200,30 @@ export default class App extends Component {
 
   startScroll() {
 
+      // Play the sound with an onEnd callback
+//   ding.play((success) => {
+//   if (success) {
+//     console.log('successfully finished playing');
+//   } else {
+//     console.log('playback failed due to audio decoding errors');
+//     // reset the player to its uninitialized state (android only)
+//     // this is the only option to recover after an error occured and use the player again
+//     whoosh.reset();
+//   }
+// });
     this.setState({ count: this.state.score++ });
 
     if (!this.state.firstTile && this.state.paused) {
       this.stopTimer();
-      this.setState({ firstTile: true, pausedSymbol: '||' });
+      this.setState({ firstTile: true, pausedSymbol: icon[4] });
       this.scrollDown();
     }
   }
 
   endReached() {
     this.stopTimer();
-    this.setState({ paused : false });
+    this.setState({ paused : false, disableButton : true });
+    console.log(this.state.disableButton);
     ToastAndroid.show('   Game Over \n your Score is: ' + this.state.score, 1);
   }
 
@@ -226,29 +263,39 @@ export default class App extends Component {
 
         </View>
 
-        <View style={styles.bottomMenuContainer}>
+        <View style={styles.bottomLeft}>
 
-          <MenuButton name={this.state.pausedSymbol}
-            Action={this.startStop}
-          />
-          <MenuButton name='Reset'
-            Action={this.resetGame}
+          <MenuButton           
+          type={'image'} 
+          typeInfo={this.state.pausedSymbol}
+          Action={this.startStop}
+          disableButton={this.state.disableButton}
           />
 
-          <View style={styles.Picker}>
-          <Picker
-            mode='dropdown'
-            prompt="testing"
-            selectedValue={this.state.language}
-            >
-            <Picker.Item label="easy" value="1" />
-            <Picker.Item label="medium" value="2" />
-            <Picker.Item label="hard" value="3" />
-        </Picker>
-        
-          </View>
+          <MenuButton 
+          type={'image'} 
+          typeInfo={icon[1]}
+          Action={this.resetGame}
+          disableButton={false}
+          />
         </View>
 
+        <View style={styles.bottomRight}>
+          
+
+            <View style={styles.menuShort}>
+              <View style={styles.scoreIcon}>
+
+              <Image style={{height:13, width:13}} source={icon[5]}/>
+              </View>
+                 <Text style={styles.scoreText}>{this.state.score}</Text>
+            </View>
+
+        <Hearts/>
+            
+            
+        </View>
+          
         
 
       </View>
