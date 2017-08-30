@@ -6,6 +6,7 @@ import {
     TouchableNativeFeedback, 
     ListView, 
     Dimensions,
+    Vibration
     
  } from 'react-native';
 import styles from '../Styles/Styles';
@@ -92,6 +93,7 @@ export default class Scroll extends Component {
             this.setState({
                 dataSource: newDataSource,
             });
+            Vibration.vibrate([0, 500, 0, 500]);
             this.props.stopGame();
         }
         else {
@@ -101,6 +103,7 @@ export default class Scroll extends Component {
             this.setState({
                 dataSource: newDataSource,
             });
+            Vibration.vibrate([0, 10]);
             this.props.Action();
         }
 

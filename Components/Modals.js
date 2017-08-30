@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {AppRegistry, View, Text, TouchableNativeFeedback, Image} from 'react-native';
 import styles from '../Styles/Styles';
 
+import MenuButton from '../Components/Button';
 
 
-export default class MenuButton extends Component{
+
+export default class Modals extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -57,26 +59,28 @@ export default class MenuButton extends Component{
     render()
     {
         return (
-          
+        
+            <View style={styles.gameOverMain}>
+                <Image  style={{width:100, height:100}}  source={require('../assets/icons/gameOver.png')}/>
+                <View style = { styles.gameOverRestart }>
 
-            <TouchableNativeFeedback  
+                    <TouchableNativeFeedback    
+                    onPress={this.props.Action} 
+                    >
 
-            disabled={this.state.disableButton}
-            onPress={this.props.Action} 
+                        
+                            <Image style={{width:30, height:30}}source={require('../assets/icons/restart.png')}/>
+                        
             
-            >
+                    </TouchableNativeFeedback>
 
-                <View style = { styles.menuShort }>
-                    {this.renderComponent(this.state.type, this.state.typeInfo )}
                 </View>
-            
-            </TouchableNativeFeedback>
 
-          
 
+            </View>
         )
     }
 
 }
 
-AppRegistry.registerComponent('MenuButton', () => MenuButton);
+AppRegistry.registerComponent('Modals', () => Modals);

@@ -5,7 +5,9 @@ import {
   StatusBar,
   ToastAndroid,
   Picker,
-  Image
+  Image,
+  Modal,
+  TouchableNativeFeedback
 
 } from 'react-native';
 
@@ -13,6 +15,7 @@ import styles from './Styles/Styles';
 import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
 import Hearts from './Components/Hearts';
+import Modals from './Components/Modals';
 //import Sound from 'react-native-sound';
 
 // Import the react-native-sound module
@@ -58,7 +61,8 @@ export default class App extends Component {
       paused: true,
       pausedSymbol: icon[3],
       score: 0,
-      disableButton : false
+      disableButton : false,
+      showBox : false,
 
     };
 
@@ -71,9 +75,12 @@ export default class App extends Component {
     this.generateKeys = this.generateKeys.bind(this);
     this.startScroll = this.startScroll.bind(this);
     this.endReached = this.endReached.bind(this);
+    this.renderText = this.renderText.bind(this);
   }
 
-
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
 
   stopTimer() {
     clearTimeout(this.timer);
@@ -104,7 +111,6 @@ export default class App extends Component {
     else {
       this.stopTimer();
       this.setState({ OffSet: 0 });
-      console.log('Top Reached');
     }
   }
 
@@ -131,13 +137,12 @@ export default class App extends Component {
       let newValue = !this.state.paused;
 
       if (newValue) {
-
         this.scrollDown();
-        this.setState({ paused: newValue, pausedSymbol: icon[3] });
+        this.setState({ paused: newValue, pausedSymbol: icon[4] });
       }
       else {
         this.stopTimer();
-        this.setState({ paused: newValue, pausedSymbol: icon[4] });
+        this.setState({ paused: newValue, pausedSymbol: icon[3] });
       }
     }
   }
@@ -156,7 +161,8 @@ export default class App extends Component {
       pausedSymbol: icon[3],
       firstTile: false,
       score: 0,
-      disableButton : false
+      disableButton : false,
+      showBox : false,
     });
 
   }
@@ -215,16 +221,20 @@ export default class App extends Component {
 
     if (!this.state.firstTile && this.state.paused) {
       this.stopTimer();
-      this.setState({ firstTile: true, pausedSymbol: icon[4] });
+      this.setState({ firstTile: true, pausedSymbol: icon[4], paused:true });
       this.scrollDown();
     }
   }
 
   endReached() {
     this.stopTimer();
-    this.setState({ paused : false, disableButton : true });
-    console.log(this.state.disableButton);
+    this.setState({ paused : false, disableButton : true, showBox: true });
+    
     ToastAndroid.show('   Game Over \n your Score is: ' + this.state.score, 1);
+  }
+
+  renderText(){
+    this.setState({showBox:true});
   }
 
   render() {
@@ -233,8 +243,9 @@ export default class App extends Component {
       <View style={styles.container}>
         <StatusBar hidden={true} />
 
+        
         <View style={{ flexDirection: 'row' }}>
-
+          
 
           <Scroll Action={this.startScroll}
             onPause ={this.state.paused}
@@ -262,7 +273,7 @@ export default class App extends Component {
             scrollPos={this.state.OffSet} />
 
         </View>
-
+        {this.state.showBox && <Modals Action={this.resetGame}/>}
         <View style={styles.bottomLeft}>
 
           <MenuButton           
@@ -278,11 +289,11 @@ export default class App extends Component {
           Action={this.resetGame}
           disableButton={false}
           />
+
         </View>
 
         <View style={styles.bottomRight}>
-          
-
+        
             <View style={styles.menuShort}>
               <View style={styles.scoreIcon}>
 

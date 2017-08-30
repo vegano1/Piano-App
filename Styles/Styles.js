@@ -53,17 +53,6 @@ export default StyleSheet.create({
     elevation: 3,
   },
 
-  Picker : {
-    justifyContent: 'center',
-    alignSelf : 'center',
-    borderWidth: 1,
-    borderColor:'black',
-    borderRadius: 5,
-    height: Dimensions.get('window').height / 14,
-    width: Dimensions.get('window').width / 11,
-    backgroundColor:'#0097A7'
-  },
-
 
   bottomRight : {
     flexDirection: 'row',
@@ -113,6 +102,39 @@ export default StyleSheet.create({
     width : 20,
     height : 20,
 
+  },
+
+  gameOverMain : {
+    height: Dimensions.get('window').height/4,
+    width: Dimensions.get('window').width/1.5,
+    position: 'absolute',
+    top: 100,
+    right: 70,
+
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 20,
+
+    backgroundColor: '#0288D1',
+
+    shadowRadius: 5,
+    elevation: 3,
+
+    alignItems: 'center',
+  },
+
+  gameOverRestart : {
+
+    height: Dimensions.get('window').height / 12,
+    width: Dimensions.get('window').width / 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    elevation: 10,
+
+    backgroundColor: '#0097A7',
   }
 });
 
