@@ -4,114 +4,98 @@ import {
     View, 
     Text, 
     TouchableNativeFeedback, 
-    ListView, 
+    FlatList, 
     Dimensions,
     Vibration
     
  } from 'react-native';
+
 import styles from '../Styles/Styles';
-import InvertibleScrollView from 'react-native-invertible-scroll-view';
-
-
-var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-
+import { InvertibleFlatList } from 'react-native-invertible-flatlist';
 
 export default class Scroll extends Component {
+
     constructor(props) {
         super(props);
-
         this.state = {
-            dataSource: ds.cloneWithRows(this.props.dataSource),
-            newDataSource: null,
+
+            dataSource: this.props.dataSource,
             paused : false,
 
         };
 
-        this.startGame = this.startGame.bind(this);
+        this.renderItem = this.renderItem.bind(this);
+        this.tileColor = this.tileColor.bind(this);
+        this.startTile = this.startTile.bind(this);
+        this.handlePress = this.handlePress.bind(this);
     }
 
-
-    keyColor(rowData) {
-
-        switch (rowData) {
-            case 1:
-                return {
-                    flex: 1,
-                    borderRadius: 15,
-                    borderWidth: 0.3,
-                    backgroundColor: '#0288D1',
-                    borderColor: 'black',
-                    alignItems: 'center',
-
-
-                };
-            case 2:
-                return {
-                    flex: 1,
-                    borderRadius: 15,
-                    borderWidth: 1,
-                    backgroundColor: 'red',
-                    borderColor: '#B3E5FC',
-
-                };
-
-
-        }
-
-    }
-
-    // componentDidMount(props) {
-         
-        
-    // }
-
-
-
+    
     componentWillReceiveProps(nextProps) {
         
         this.setState({
-            dataSource: ds.cloneWithRows(nextProps.dataSource),
+            dataSource: nextProps.dataSource,
             paused : !nextProps.onPause,
         });
 
     }
 
+    componentDidUpdate(props) {
 
-    componentDidUpdate(nextProps, props) {
-
-        this.refs.listView.scrollTo({ y: this.props.scrollPos });
+        this.refs.FlatList.scrollToOffset({ offset: this.props.scrollPos });
+        
     }
 
-    handlePress(sectionID, rowID) {
+    renderItem({ item, index }) {
+        return (
+            
+                <TouchableNativeFeedback
+                disabled={this.state.paused}
+                background={TouchableNativeFeedback.Ripple('#0288D1', true)}
+                onPressIn={()=>this.handlePress(index)}
+                >
 
-        let data = this.props.dataSource;
+                    <View style={[styles.item]}>
 
-        if (data[sectionID] == 0) {
+                        <View ref='item' style={this.tileColor(item)}>
+                            {this.startTile(item, index)}
+                        </View>
 
-            data.splice(sectionID, 1, 2);
-            let newDataSource = ds.cloneWithRows(data);
-            this.setState({
-                dataSource: newDataSource,
-            });
-            Vibration.vibrate([0, 500, 0, 500]);
-            this.props.stopGame();
-        }
-        else {
-
-            data.splice(sectionID, 1, 0);
-            let newDataSource = ds.cloneWithRows(data);
-            this.setState({
-                dataSource: newDataSource,
-            });
-            Vibration.vibrate([0, 10]);
-            this.props.Action();
-        }
-
+                    </View>
+                </TouchableNativeFeedback>
+        )
     }
 
-    startGame(rowData, sectionID) {
+    
+    tileColor(item) {
+            
+            switch (item) {
+                case '1':
+                
+                    return {
+                        flex: 1,
+                        borderRadius: 15,
+                        borderWidth: 0.3,
+                        backgroundColor: '#0288D1',
+                        borderColor: 'black',
+                        alignItems: 'center',
+                    };
 
-        if (rowData == 1 && sectionID == 1) {
+                case '2':
+                    return {
+                        flex: 1,
+                        borderRadius: 15,
+                        borderWidth: 1,
+                        backgroundColor: 'red',
+                        borderColor: '#B3E5FC',
+                    };
+            }
+    }
+
+    
+
+    startTile(item, index) {
+        if (item == 1 && index == 1) {
 
             return (
 
@@ -122,58 +106,87 @@ export default class Scroll extends Component {
                         fontWeight: 'bold',
                         color : '#0D47A1',
                         lineHeight: 90
-
-
                     }}
 
                 >Start</Text>
             )
-
         }
-    }
+    }    
 
+    handlePress(index) {
+
+        let data = this.props.dataSource;
+
+        if (data[index] == '0') {
+
+            data.splice(index, 1, '2');
+            Vibration.vibrate([0, 500, 0, 500]);
+            this.props.stopGame();
+        }
+
+        else {
+            
+            data.splice(index, 1, '0');
+            Vibration.vibrate([0, 10]);
+            this.props.Action();
+        }
+
+        this.setState({
+            dataSource : data
+        });
+    }
 
 
     render() {
         return (
 
-
-            <ListView style={styles.scrollView}
-                renderScrollComponent={(props, sectionID) =>
-                    <InvertibleScrollView {...props} inverted />}
-                    
-                scrollEnabled={false}
-                onEndReached={this.props.endReached}
-                onEndReachedThreshold={10}
-                ref='listView'
-                showsVerticalScrollIndicator={false}
-                dataSource={this.state.dataSource}
-                renderRow={(rowData, rowID, sectionID) =>
-
-                    <TouchableNativeFeedback
-                        disabled={this.state.paused}
-                        background={TouchableNativeFeedback.Ripple('#0288D1', true)}
-                        onPressIn={() => this.handlePress(sectionID, rowID)}
-                    >
-
-                        <View style={[styles.item]}>
-
-                            <View ref='item' style={this.keyColor(rowData)}>
-                                {this.startGame(rowData, sectionID)}
-                            </View>
-                        </View>
-
-                    </TouchableNativeFeedback>
-
-                }>
-
-            </ListView>
-
-
-
+            <InvertibleFlatList
+            inverted={true}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            onEndReached={this.props.endReached}
+            onEndReachedThreshold={0.1}
+            disableVirtualization={false}
+            ref='FlatList'
+            keyExtractor={(item, index) => index}
+            data={this.state.dataSource}
+            extraData={this.state}
+            renderItem={({item, index}) => this.renderItem({item,index})}
+            />
         )
     }
-
-}
+};
 
 AppRegistry.registerComponent('Scroll', () => Scroll);
+
+
+            // <ListView style={styles.scrollView}
+            //     renderScrollComponent={(props, sectionID) =>
+            //         <InvertibleScrollView {...props} inverted />}
+            //     onChangeVisibleRows={(visibleRows, changedRows)=>this.handleChange.bind(this)}
+            //     scrollEnabled={false}
+            //     onEndReached={this.props.endReached}
+            //     onEndReachedThreshold={10}
+            //     ref='listView'
+            //     showsVerticalScrollIndicator={false}
+            //     dataSource={this.state.dataSource}
+            //     renderRow={(rowData, rowID, sectionID) =>
+
+            //         <TouchableNativeFeedback
+            //             disabled={this.state.paused}
+            //             background={TouchableNativeFeedback.Ripple('#0288D1', true)}
+            //             onPressIn={() => this.handlePress(sectionID, rowID)}
+            //         >
+
+            //             <View style={[styles.item]}>
+
+            //                 <View ref='item' style={this.tileColor(rowData)}>
+            //                     {this.startTile(rowData, sectionID)}
+            //                 </View>
+            //             </View>
+
+            //         </TouchableNativeFeedback>
+
+            //     }>
+
+            // </ListView>

@@ -62,7 +62,7 @@ export default class MenuButton extends Component{
             <TouchableNativeFeedback  
 
             disabled={this.state.disableButton}
-            onPress={this.props.Action} 
+            onPressIn={this.props.Action} 
             
             >
 

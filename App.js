@@ -16,21 +16,6 @@ import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
 import Hearts from './Components/Hearts';
 import Modals from './Components/Modals';
-//import Sound from 'react-native-sound';
-
-// Import the react-native-sound module
-
-// Load the sound file 'whoosh.mp3' from the app bundle
-// See notes below about preloading sounds within initialization code below.
-// var ding = new Sound('./assets/sounds/ding.wav', Sound.MAIN_BUNDLE, (error) => {
-//   if (error) {
-//     console.log('failed to load the sound', error);
-//     return;
-//   }
-//     // loaded successfully
-//     console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
-//   });
-
 
 var momentum = 1;
 var icon = [
@@ -43,6 +28,7 @@ var icon = [
 
 ];
 
+
 export default class App extends Component {
 
   constructor(props) {
@@ -51,10 +37,10 @@ export default class App extends Component {
 
     this.state = {
 
-      dataSource1: this.generateKeys(19),
-      dataSource2: this.generateKeys(19),
-      dataSource3: this.generateKeys(19),
-      dataSource4: this.generateKeys(19),
+      dataSource1: this.generateKeys(45),
+      dataSource2: this.generateKeys(45),
+      dataSource3: this.generateKeys(45),
+      dataSource4: this.generateKeys(45),
 
       OffSet: 0,
       firstTile: false,
@@ -87,7 +73,6 @@ export default class App extends Component {
     momentum = 1;
   }
 
-
   scrollUp(event, refs, scrollViewRef) {
 
     if (this.state.OffSet > 0) {
@@ -114,7 +99,6 @@ export default class App extends Component {
     }
   }
 
-
   scrollDown(event, refs) {
 
     momentum = momentum * 1.3;
@@ -128,9 +112,8 @@ export default class App extends Component {
     this.timer = setTimeout(this.scrollDown, 1);
   }
 
+   startStop() {
 
-
-  startStop() {
     if (this.state.firstTile) {
       this.stopTimer();
 
@@ -152,10 +135,10 @@ export default class App extends Component {
     this.stopTimer();
 
     this.setState({
-      dataSource1: this.generateKeys(19),
-      dataSource2: this.generateKeys(19),
-      dataSource3: this.generateKeys(19),
-      dataSource4: this.generateKeys(19),
+      dataSource1: this.generateKeys(45),
+      dataSource2: this.generateKeys(45),
+      dataSource3: this.generateKeys(45),
+      dataSource4: this.generateKeys(45),
       OffSet: 0,
       paused: true,
       pausedSymbol: icon[3],
@@ -176,50 +159,41 @@ export default class App extends Component {
       current = Math.floor(Math.random().toPrecision(1) * 9);
 
       switch (current) {
-        case 0: arr[i] = 0;
+        case 0: arr[i] = '0';
           break;
-        case 1: arr[i] = 1;
+        case 1: arr[i] = '1';
           break;
-        case 2: arr[i] = 0;
+        case 2: arr[i] = '0';
           break;
-        case 3: arr[i] = 0;
+        case 3: arr[i] = '0';
           break;
-        case 4: arr[i] = 1;
+        case 4: arr[i] = '1';
           break;
-        case 5: arr[i] = 1;
+        case 5: arr[i] = '1';
           break;
-        case 6: arr[i] = 1;
+        case 6: arr[i] = '1';
           break;
-        case 7: arr[i] = 1;
+        case 7: arr[i] = '1';
           break;
-        case 8: arr[i] = 0;
+        case 8: arr[i] = '0';
           break;
-        case 9: arr[i] = 1;
+        case 9: arr[i] = '1';
           break;
       }
     }
 
-    arr.push(0, 0, 0);
+    arr.push('0', '0', '0','0');
 
     return arr;
   }
 
   startScroll() {
 
-      // Play the sound with an onEnd callback
-//   ding.play((success) => {
-//   if (success) {
-//     console.log('successfully finished playing');
-//   } else {
-//     console.log('playback failed due to audio decoding errors');
-//     // reset the player to its uninitialized state (android only)
-//     // this is the only option to recover after an error occured and use the player again
-//     whoosh.reset();
-//   }
-// });
+
     this.setState({ count: this.state.score++ });
 
     if (!this.state.firstTile && this.state.paused) {
+      
       this.stopTimer();
       this.setState({ firstTile: true, pausedSymbol: icon[4], paused:true });
       this.scrollDown();
@@ -230,12 +204,14 @@ export default class App extends Component {
     this.stopTimer();
     this.setState({ paused : false, disableButton : true, showBox: true });
     
-    ToastAndroid.show('   Game Over \n your Score is: ' + this.state.score, 1);
+    //ToastAndroid.show('   Game Over \n your Score is: ' + this.state.score, 1);
   }
 
   renderText(){
     this.setState({showBox:true});
   }
+
+
 
   render() {
     return (
@@ -273,6 +249,7 @@ export default class App extends Component {
             scrollPos={this.state.OffSet} />
 
         </View>
+
         {this.state.showBox && <Modals Action={this.resetGame}/>}
         <View style={styles.bottomLeft}>
 
@@ -307,8 +284,6 @@ export default class App extends Component {
             
         </View>
           
-        
-
       </View>
     );
   }

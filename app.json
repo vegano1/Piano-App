@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "colorpicker",
-    "description": "An empty new project",
+    "description": "TapTiles!",
     "slug": "colorpicker",
     "privacy": "public",
-    "sdkVersion": "18.0.0",
+    "sdkVersion": "20.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
@@ -18,6 +18,9 @@
     },
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "org.rnplay.exp"
     }
   }
 }
