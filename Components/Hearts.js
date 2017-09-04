@@ -8,7 +8,8 @@ export default class Hearts extends Component{
     constructor(props){
         super(props);
         this.state = {
-            disableButton : false
+            disableButton : false,
+            Hearts : this.props.remainingHearts
         };
 
         initialArr = [
@@ -32,6 +33,7 @@ export default class Hearts extends Component{
         
         this.setState({
             disableButton : nextProps.disableButton,
+            Hearts : nextProps.remainingHearts
         });
 
 
@@ -47,7 +49,7 @@ export default class Hearts extends Component{
                         source={require('../assets/icons/heart.png')}
                         />
                     </View>
-                    <Text style={styles.heartText}>0</Text>
+                    <Text style={styles.heartText}>{this.state.Hearts}</Text>
 
             
             </View>

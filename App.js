@@ -7,7 +7,8 @@ import {
   Picker,
   Image,
   Modal,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  Vibration
 
 } from 'react-native';
 
@@ -37,18 +38,20 @@ export default class App extends Component {
 
     this.state = {
 
-      dataSource1: this.generateKeys(45),
-      dataSource2: this.generateKeys(45),
-      dataSource3: this.generateKeys(45),
-      dataSource4: this.generateKeys(45),
+      dataSource1: this.generateKeys(19),
+      dataSource2: this.generateKeys(19),
+      dataSource3: this.generateKeys(19),
+      dataSource4: this.generateKeys(19),
 
       OffSet: 0,
       firstTile: false,
       paused: true,
       pausedSymbol: icon[3],
       score: 0,
+      Hearts : 3,
       disableButton : false,
       showBox : false,
+
 
     };
 
@@ -62,6 +65,7 @@ export default class App extends Component {
     this.startScroll = this.startScroll.bind(this);
     this.endReached = this.endReached.bind(this);
     this.renderText = this.renderText.bind(this);
+    this.missedTile = this.missedTile.bind(this);
   }
 
   setModalVisible(visible) {
@@ -135,17 +139,18 @@ export default class App extends Component {
     this.stopTimer();
 
     this.setState({
-      dataSource1: this.generateKeys(45),
-      dataSource2: this.generateKeys(45),
-      dataSource3: this.generateKeys(45),
-      dataSource4: this.generateKeys(45),
-      OffSet: 0,
+      dataSource1: this.generateKeys(19),
+      dataSource2: this.generateKeys(19),
+      dataSource3: this.generateKeys(19),
+      dataSource4: this.generateKeys(19),
       paused: true,
       pausedSymbol: icon[3],
       firstTile: false,
-      score: 0,
       disableButton : false,
       showBox : false,
+      OffSet: 0,
+      score: 0,
+      Hearts : 3,
     });
 
   }
@@ -211,6 +216,21 @@ export default class App extends Component {
     this.setState({showBox:true});
   }
 
+  missedTile(){
+    if(this.state.firstTile){
+
+      Vibration.vibrate([0, 500]);
+      this.setState({Hearts : this.state.Hearts - 1});
+      if(this.state.Hearts == 1){
+        this.endReached();
+      }
+    }
+    
+
+
+
+  }
+
 
 
   render() {
@@ -228,29 +248,38 @@ export default class App extends Component {
             stopGame={this.endReached}
             endReached={this.endReached}
             dataSource={this.state.dataSource1}
-            scrollPos={this.state.OffSet} />
+            scrollPos={this.state.OffSet}
+            missedTile={this.missedTile}
+            firstTile = {this.state.firstTile} />
 
           <Scroll Action={this.startScroll}
             onPause ={this.state.paused}
             stopGame={this.endReached}
             dataSource={this.state.dataSource2}
-            scrollPos={this.state.OffSet} />
+            scrollPos={this.state.OffSet}
+            missedTile={this.missedTile}
+            firstTile = {this.state.firstTile} />
 
           <Scroll Action={this.startScroll}
             onPause ={this.state.paused}
             stopGame={this.endReached}
             dataSource={this.state.dataSource3}
-            scrollPos={this.state.OffSet} />
+            scrollPos={this.state.OffSet}
+            missedTile={this.missedTile}
+            firstTile = {this.state.firstTile} />
 
           <Scroll Action={this.startScroll}
             onPause ={this.state.paused}
             stopGame={this.endReached}
             dataSource={this.state.dataSource4}
-            scrollPos={this.state.OffSet} />
+            scrollPos={this.state.OffSet}
+            missedTile={this.missedTile}
+            firstTile = {this.state.firstTile} />
 
         </View>
 
         {this.state.showBox && <Modals Action={this.resetGame}/>}
+
         <View style={styles.bottomLeft}>
 
           <MenuButton           
@@ -272,16 +301,21 @@ export default class App extends Component {
         <View style={styles.bottomRight}>
         
             <View style={styles.menuShort}>
-              <View style={styles.scoreIcon}>
-
-              <Image style={{height:13, width:13}} source={icon[5]}/>
-              </View>
-                 <Text style={styles.scoreText}>{this.state.score}</Text>
+                <View style={styles.scoreIcon}>
+                    <Image style={{height:13, width:13}} 
+                    source={icon[5]}/>
+                </View>
+                <Text style={styles.scoreText}>{this.state.score}</Text>
             </View>
 
-        <Hearts/>
-            
-            
+            <View style={styles.menuShort}>
+                <View style={styles.heartIcon}>
+                    <Image style={{width:13, height:13}}
+                    source={icon[0]}/>
+                </View>
+                <Text style={styles.heartText}>{this.state.Hearts}</Text>
+            </View>
+               
         </View>
           
       </View>

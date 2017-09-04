@@ -21,6 +21,8 @@ export default class Scroll extends Component {
 
             dataSource: this.props.dataSource,
             paused : false,
+            firstTile : false,
+
 
         };
 
@@ -28,6 +30,7 @@ export default class Scroll extends Component {
         this.tileColor = this.tileColor.bind(this);
         this.startTile = this.startTile.bind(this);
         this.handlePress = this.handlePress.bind(this);
+        this.missedTile = this.missedTile.bind(this);
     }
 
     
@@ -36,7 +39,9 @@ export default class Scroll extends Component {
         this.setState({
             dataSource: nextProps.dataSource,
             paused : !nextProps.onPause,
+            firstTile : nextProps.firstTile
         });
+
 
     }
 
@@ -68,7 +73,7 @@ export default class Scroll extends Component {
 
     
     tileColor(item) {
-            
+
             switch (item) {
                 case '1':
                 
@@ -92,7 +97,6 @@ export default class Scroll extends Component {
             }
     }
 
-    
 
     startTile(item, index) {
         if (item == 1 && index == 1) {
@@ -108,6 +112,7 @@ export default class Scroll extends Component {
                         lineHeight: 90
                     }}
 
+                
                 >Start</Text>
             )
         }
@@ -116,77 +121,67 @@ export default class Scroll extends Component {
     handlePress(index) {
 
         let data = this.props.dataSource;
+        if(!this.state.firstTile && index == 1 && data[index]== '1'){
 
-        if (data[index] == '0') {
-
-            data.splice(index, 1, '2');
-            Vibration.vibrate([0, 500, 0, 500]);
-            this.props.stopGame();
-        }
-
-        else {
+                data.splice(index, 1, '0');
+                Vibration.vibrate([0, 10]);
+                this.props.Action();
             
-            data.splice(index, 1, '0');
-            Vibration.vibrate([0, 10]);
-            this.props.Action();
+        }
+        else if(this.state.firstTile){
+
+            if (data[index] == '0') {
+                
+                            data.splice(index, 1, '2');
+                            Vibration.vibrate([0, 500, 0, 500]);
+                            this.props.stopGame();
+                        }
+                
+                        else {
+                            
+                            data.splice(index, 1, '0');
+                            Vibration.vibrate([0, 10]);
+                            this.props.Action();
+
+                        }
+                
+            this.setState({
+                dataSource : data
+            });
         }
 
-        this.setState({
-            dataSource : data
-        });
     }
 
+    missedTile({ changed }) {
+            
+            if(changed[0].isViewable==false && changed[0].item == '1' ){
+                this.props.missedTile();
+            } 
+        
+    }
 
     render() {
         return (
 
             <InvertibleFlatList
+            ref='FlatList'
             inverted={true}
             scrollEnabled={false}
             showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            onViewableItemsChanged={this.missedTile}
             onEndReached={this.props.endReached}
             onEndReachedThreshold={0.1}
-            disableVirtualization={false}
-            ref='FlatList'
             keyExtractor={(item, index) => index}
+
             data={this.state.dataSource}
             extraData={this.state}
-            renderItem={({item, index}) => this.renderItem({item,index})}
+
+            renderItem={({item, index}) => 
+            this.renderItem({item,index})}
             />
         )
     }
 };
 
 AppRegistry.registerComponent('Scroll', () => Scroll);
-
-
-            // <ListView style={styles.scrollView}
-            //     renderScrollComponent={(props, sectionID) =>
-            //         <InvertibleScrollView {...props} inverted />}
-            //     onChangeVisibleRows={(visibleRows, changedRows)=>this.handleChange.bind(this)}
-            //     scrollEnabled={false}
-            //     onEndReached={this.props.endReached}
-            //     onEndReachedThreshold={10}
-            //     ref='listView'
-            //     showsVerticalScrollIndicator={false}
-            //     dataSource={this.state.dataSource}
-            //     renderRow={(rowData, rowID, sectionID) =>
-
-            //         <TouchableNativeFeedback
-            //             disabled={this.state.paused}
-            //             background={TouchableNativeFeedback.Ripple('#0288D1', true)}
-            //             onPressIn={() => this.handlePress(sectionID, rowID)}
-            //         >
-
-            //             <View style={[styles.item]}>
-
-            //                 <View ref='item' style={this.tileColor(rowData)}>
-            //                     {this.startTile(rowData, sectionID)}
-            //                 </View>
-            //             </View>
-
-            //         </TouchableNativeFeedback>
-
-            //     }>
-
-            // </ListView>
