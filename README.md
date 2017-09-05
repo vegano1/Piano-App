@@ -2,7 +2,7 @@
 Piano touch app in react native.
 
 
-<img src="/Screenshots/Screenshot_20170826-003043.png" height=30% width=30%>  <img src="/Screenshots/Screenshot_20170826-003101.png" height=30% width=30%>  <img src="/Screenshots/Screenshot_20170830-031844.png" height=30% width=30%>
+<img src="/Screenshots/Screenshot_20170905-004808.png" height=30% width=30%>  <img src="/Screenshots/Screenshot_20170826-003101.png" height=30% width=30%>  <img src="/Screenshots/Screenshot_20170830-031844.png" height=30% width=30%>
 
 [Features]
 
