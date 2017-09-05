@@ -4,8 +4,7 @@ import {
     View, 
     Text, 
     TouchableNativeFeedback, 
-    FlatList, 
-    Dimensions,
+    FlatList,
     Vibration
     
  } from 'react-native';
@@ -132,18 +131,17 @@ export default class Scroll extends Component {
 
             if (data[index] == '0') {
                 
-                            data.splice(index, 1, '2');
-                            Vibration.vibrate([0, 500, 0, 500]);
-                            this.props.stopGame();
-                        }
+                data.splice(index, 1, '2');
+                Vibration.vibrate([0, 500, 0, 500]);
+                this.props.stopGame();
+            }
+    
+            else {
                 
-                        else {
-                            
-                            data.splice(index, 1, '0');
-                            Vibration.vibrate([0, 10]);
-                            this.props.Action();
-
-                        }
+                data.splice(index, 1, '0');
+                Vibration.vibrate([0, 10]);
+                this.props.Action();
+            }
                 
             this.setState({
                 dataSource : data
@@ -154,9 +152,9 @@ export default class Scroll extends Component {
 
     missedTile({ changed }) {
             
-            if(changed[0].isViewable==false && changed[0].item == '1' ){
-                this.props.missedTile();
-            } 
+        if(changed[0].isViewable==false && changed[0].item == '1' ){
+            this.props.missedTile();
+        } 
         
     }
 

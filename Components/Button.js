@@ -18,6 +18,16 @@ export default class MenuButton extends Component{
         
     }
 
+    componentWillReceiveProps(nextProps) {
+        
+        this.setState({
+            disableButton : nextProps.disableButton,
+            type : nextProps.type,
+            typeInfo : nextProps.typeInfo
+        });
+    }
+
+    
     renderComponent(type, typeInfo){
         
 
@@ -35,35 +45,18 @@ export default class MenuButton extends Component{
                 <Image style={{width: 20, height:20}} 
                 source={typeInfo} />
             );
-        }
-
-            
-        
+        }   
     }
 
-    
 
-    componentWillReceiveProps(nextProps) {
-        
-        this.setState({
-            disableButton : nextProps.disableButton,
-            typeInfo : nextProps.typeInfo
-        });
-
-
-
-
-    }
     render()
     {
         return (
           
 
             <TouchableNativeFeedback  
-
             disabled={this.state.disableButton}
             onPressIn={this.props.Action} 
-            
             >
 
                 <View style = { styles.menuShort }>
@@ -71,9 +64,6 @@ export default class MenuButton extends Component{
                 </View>
             
             </TouchableNativeFeedback>
-
-          
-
         )
     }
 

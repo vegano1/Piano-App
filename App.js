@@ -3,10 +3,7 @@ import {
   Text,
   View,
   StatusBar,
-  ToastAndroid,
-  Picker,
   Image,
-  Modal,
   TouchableNativeFeedback,
   Vibration
 
@@ -15,7 +12,6 @@ import {
 import styles from './Styles/Styles';
 import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
-import Hearts from './Components/Hearts';
 import Modals from './Components/Modals';
 
 var momentum = 1;
@@ -35,13 +31,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
-
-      dataSource1: this.generateKeys(19),
-      dataSource2: this.generateKeys(19),
-      dataSource3: this.generateKeys(19),
-      dataSource4: this.generateKeys(19),
+      dataSource : this.generateTiles(19),
 
       OffSet: 0,
       firstTile: false,
@@ -52,7 +43,6 @@ export default class App extends Component {
       disableButton : false,
       showBox : false,
 
-
     };
 
     this.timer = null;
@@ -61,15 +51,10 @@ export default class App extends Component {
     this.stopTimer = this.stopTimer.bind(this);
     this.startStop = this.startStop.bind(this);
     this.resetGame = this.resetGame.bind(this);
-    this.generateKeys = this.generateKeys.bind(this);
-    this.startScroll = this.startScroll.bind(this);
+    this.generateTiles = this.generateTiles.bind(this);
+    this.scoreKeeper = this.scoreKeeper.bind(this);
     this.endReached = this.endReached.bind(this);
-    this.renderText = this.renderText.bind(this);
     this.missedTile = this.missedTile.bind(this);
-  }
-
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
   }
 
   stopTimer() {
@@ -103,17 +88,16 @@ export default class App extends Component {
     }
   }
 
-  scrollDown(event, refs) {
+  scrollDown() {
 
     momentum = momentum * 1.3;
-    if (momentum > 15)
-      momentum = 15;
+    if (momentum > 20)
+      momentum = 20;
 
     this.setState({
       OffSet: this.state.OffSet + momentum,
-
     });
-    this.timer = setTimeout(this.scrollDown, 1);
+    this.timer = setTimeout(this.scrollDown, 0.5);
   }
 
    startStop() {
@@ -139,10 +123,7 @@ export default class App extends Component {
     this.stopTimer();
 
     this.setState({
-      dataSource1: this.generateKeys(19),
-      dataSource2: this.generateKeys(19),
-      dataSource3: this.generateKeys(19),
-      dataSource4: this.generateKeys(19),
+      dataSource: this.generateTiles(19),
       paused: true,
       pausedSymbol: icon[3],
       firstTile: false,
@@ -155,45 +136,55 @@ export default class App extends Component {
 
   }
 
-  generateKeys(totalKeys) {
+  generateTiles(Quantity) {
 
-    let arr = ['*'];
-    let current;
+    let dataSource = [];
 
-    for (var i = 1; i < totalKeys; i++) {
-      current = Math.floor(Math.random().toPrecision(1) * 9);
+    for(let j = 0; j<=3; j++){
 
-      switch (current) {
-        case 0: arr[i] = '0';
-          break;
-        case 1: arr[i] = '1';
-          break;
-        case 2: arr[i] = '0';
-          break;
-        case 3: arr[i] = '0';
-          break;
-        case 4: arr[i] = '1';
-          break;
-        case 5: arr[i] = '1';
-          break;
-        case 6: arr[i] = '1';
-          break;
-        case 7: arr[i] = '1';
-          break;
-        case 8: arr[i] = '0';
-          break;
-        case 9: arr[i] = '1';
-          break;
+      let arr = ['*','0'];
+      let current;
+
+      for (var i = 2; i < Quantity; i++) {
+        current = Math.floor(Math.random().toPrecision(1) * 9);
+  
+        switch (current) {
+          case 0: arr[i] = '0';
+            break;
+          case 1: arr[i] = '1';
+            break;
+          case 2: arr[i] = '0';
+            break;
+          case 3: arr[i] = '0';
+            break;
+          case 4: arr[i] = '1';
+            break;
+          case 5: arr[i] = '1';
+            break;
+          case 6: arr[i] = '1';
+            break;
+          case 7: arr[i] = '1';
+            break;
+          case 8: arr[i] = '0';
+            break;
+          case 9: arr[i] = '1';
+            break;
+        }
       }
+
+      arr.push('0', '0', '0','0');
+      dataSource.push(arr);
+      
     }
 
-    arr.push('0', '0', '0','0');
+      let random = Math.floor(Math.random().toPrecision(2) * 3);
+      dataSource[random][1] = '1';
 
-    return arr;
+    return dataSource;
+
   }
 
-  startScroll() {
-
+  scoreKeeper() {
 
     this.setState({ count: this.state.score++ });
 
@@ -208,13 +199,8 @@ export default class App extends Component {
   endReached() {
     this.stopTimer();
     this.setState({ paused : false, disableButton : true, showBox: true });
-    
-    //ToastAndroid.show('   Game Over \n your Score is: ' + this.state.score, 1);
   }
 
-  renderText(){
-    this.setState({showBox:true});
-  }
 
   missedTile(){
     if(this.state.firstTile){
@@ -232,7 +218,6 @@ export default class App extends Component {
   }
 
 
-
   render() {
     return (
 
@@ -243,35 +228,35 @@ export default class App extends Component {
         <View style={{ flexDirection: 'row' }}>
           
 
-          <Scroll Action={this.startScroll}
+          <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             stopGame={this.endReached}
             endReached={this.endReached}
-            dataSource={this.state.dataSource1}
+            dataSource={this.state.dataSource[0]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.startScroll}
+          <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             stopGame={this.endReached}
-            dataSource={this.state.dataSource2}
+            dataSource={this.state.dataSource[1]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.startScroll}
+          <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             stopGame={this.endReached}
-            dataSource={this.state.dataSource3}
+            dataSource={this.state.dataSource[2]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.startScroll}
+          <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             stopGame={this.endReached}
-            dataSource={this.state.dataSource4}
+            dataSource={this.state.dataSource[3]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
@@ -299,7 +284,6 @@ export default class App extends Component {
         </View>
 
         <View style={styles.bottomRight}>
-        
             <View style={styles.menuShort}>
                 <View style={styles.scoreIcon}>
                     <Image style={{height:13, width:13}} 
