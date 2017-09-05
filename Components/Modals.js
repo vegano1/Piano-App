@@ -10,20 +10,21 @@ export default class Modals extends Component{
         return (
         
             <View style={styles.gameOverMain}>
+            
                 <Image  style={{width:100, height:100}}  
                 source={require('../assets/icons/gameOver.png')}/>
 
-                <View style = { styles.gameOverRestart }>
 
-                    <TouchableNativeFeedback    
-                    onPressIn={this.props.Action} 
-                    >
+                <TouchableNativeFeedback    
+                onPressOut={this.props.Action} 
+                >
+                    <View style = { styles.gameOverRestart }>
+
                         <Image style={{width:30, height:30}}
                         source = { require('../assets/icons/restart.png')}/>
-                        
-                    </TouchableNativeFeedback>
 
-                </View>
+                    </View>
+                </TouchableNativeFeedback>
 
 
             </View>

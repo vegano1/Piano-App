@@ -21,8 +21,6 @@ export default class Scroll extends Component {
             dataSource: this.props.dataSource,
             paused : false,
             firstTile : false,
-
-
         };
 
         this.renderItem = this.renderItem.bind(this);
@@ -73,27 +71,27 @@ export default class Scroll extends Component {
     
     tileColor(item) {
 
-            switch (item) {
-                case '1':
-                
-                    return {
-                        flex: 1,
-                        borderRadius: 15,
-                        borderWidth: 0.3,
-                        backgroundColor: '#0288D1',
-                        borderColor: 'black',
-                        alignItems: 'center',
-                    };
+        switch (item) {
+            case '1':
+            
+                return {
+                    flex: 1,
+                    borderRadius: 15,
+                    borderWidth: 0.3,
+                    backgroundColor: '#0288D1',
+                    borderColor: 'black',
+                    alignItems: 'center',
+                };
 
-                case '2':
-                    return {
-                        flex: 1,
-                        borderRadius: 15,
-                        borderWidth: 1,
-                        backgroundColor: 'red',
-                        borderColor: '#B3E5FC',
-                    };
-            }
+            case '2':
+                return {
+                    flex: 1,
+                    borderRadius: 15,
+                    borderWidth: 1,
+                    backgroundColor: 'red',
+                    borderColor: '#B3E5FC',
+                };
+        }
     }
 
 
