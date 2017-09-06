@@ -32,7 +32,7 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      dataSource : this.generateTiles(19),
+      dataSource : this.generateTiles(5),
 
       OffSet: 0,
       firstTile: false,
@@ -123,7 +123,7 @@ export default class App extends Component {
     this.stopTimer();
 
     this.setState({
-      dataSource: this.generateTiles(19),
+      dataSource: this.generateTiles(5),
       paused: true,
       pausedSymbol: icon[3],
       firstTile: false,
@@ -172,7 +172,7 @@ export default class App extends Component {
         }
       }
 
-      arr.push('0', '0', '0','0');
+      // arr.push('0', '0', '0','0');
       dataSource.push(arr);
       
     }
@@ -197,8 +197,28 @@ export default class App extends Component {
   }
 
   endReached() {
-    this.stopTimer();
-    this.setState({ paused : false, disableButton : true, showBox: true });
+    // this.stopTimer();
+    // this.setState({ paused : false, disableButton : true, showBox: true });
+    let newDataSource = [];
+
+    let data1 = this.state.dataSource[0];
+    let data2 = this.state.dataSource[1];
+    let data3 = this.state.dataSource[2];
+    let data4 = this.state.dataSource[3];
+
+    merged1 = data1.concat(this.generateTiles(5)[0]);
+    merged2 = data2.concat(this.generateTiles(5)[1]);
+    merged3 = data3.concat(this.generateTiles(5)[2]);
+    merged4 = data4.concat(this.generateTiles(5)[3]);
+    
+    newDataSource.push(merged1);
+    newDataSource.push(merged2);
+    newDataSource.push(merged3);
+    newDataSource.push(merged4);
+
+    this.setState({dataSource : newDataSource});
+    console.log(this.state.dataSource);
+    //this.generateTiles(19);
   }
 
 
