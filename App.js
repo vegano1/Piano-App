@@ -15,6 +15,7 @@ import Scroll from './Components/Scroll';
 import Modals from './Components/Modals';
 
 var momentum = 1;
+var counter = 0;
 var icon = [
   require('./assets/icons/heart.png'),
   require('./assets/icons/restart.png'),
@@ -30,10 +31,11 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
-
+    let totalTiles = 20;
     this.state = {
-      dataSource : this.generateTiles(5),
-
+      totalTiles : totalTiles,
+      dataSource : this.generateTiles(totalTiles),
+      
       OffSet: 0,
       firstTile: false,
       paused: true,
@@ -45,6 +47,7 @@ export default class App extends Component {
 
     };
 
+    
     this.timer = null;
     this.scrollDown = this.scrollDown.bind(this);
     this.scrollUp = this.scrollUp.bind(this);
@@ -55,6 +58,7 @@ export default class App extends Component {
     this.scoreKeeper = this.scoreKeeper.bind(this);
     this.endReached = this.endReached.bind(this);
     this.missedTile = this.missedTile.bind(this);
+    this.gameOver = this.gameOver.bind(this);
   }
 
   stopTimer() {
@@ -123,7 +127,7 @@ export default class App extends Component {
     this.stopTimer();
 
     this.setState({
-      dataSource: this.generateTiles(5),
+      
       paused: true,
       pausedSymbol: icon[3],
       firstTile: false,
@@ -132,6 +136,7 @@ export default class App extends Component {
       OffSet: 0,
       score: 0,
       Hearts : 3,
+      dataSource: this.generateTiles(this.state.totalTiles)
     });
 
   }
@@ -142,7 +147,7 @@ export default class App extends Component {
 
     for(let j = 0; j<=3; j++){
 
-      let arr = ['*','0'];
+      let arr = ['0','0'];
       let current;
 
       for (var i = 2; i < Quantity; i++) {
@@ -172,7 +177,6 @@ export default class App extends Component {
         }
       }
 
-      // arr.push('0', '0', '0','0');
       dataSource.push(arr);
       
     }
@@ -197,28 +201,28 @@ export default class App extends Component {
   }
 
   endReached() {
-    // this.stopTimer();
-    // this.setState({ paused : false, disableButton : true, showBox: true });
-    let newDataSource = [];
+    counter++;
+          
+    if(counter==2){
+        counter=0;
+      
+        let newDataSource = [];
+        let totalTiles = this.state.totalTiles;
+        let newGeneratedData = this.generateTiles(totalTiles-5);
 
-    let data1 = this.state.dataSource[0];
-    let data2 = this.state.dataSource[1];
-    let data3 = this.state.dataSource[2];
-    let data4 = this.state.dataSource[3];
+        for(let x = 0; x <= 3 ;x++){
 
-    merged1 = data1.concat(this.generateTiles(5)[0]);
-    merged2 = data2.concat(this.generateTiles(5)[1]);
-    merged3 = data3.concat(this.generateTiles(5)[2]);
-    merged4 = data4.concat(this.generateTiles(5)[3]);
+          let data = this.state.dataSource[x];
+          data.splice(0, totalTiles/2);
+          let finalTiles = data.splice(totalTiles/4,5);
+          data = finalTiles.concat(newGeneratedData[x]);
+          newDataSource.push(data);
+          
+        }
+        
+        this.setState({dataSource : newDataSource, OffSet:0});
+    }
     
-    newDataSource.push(merged1);
-    newDataSource.push(merged2);
-    newDataSource.push(merged3);
-    newDataSource.push(merged4);
-
-    this.setState({dataSource : newDataSource});
-    console.log(this.state.dataSource);
-    //this.generateTiles(19);
   }
 
 
@@ -228,13 +232,14 @@ export default class App extends Component {
       Vibration.vibrate([0, 500]);
       this.setState({Hearts : this.state.Hearts - 1});
       if(this.state.Hearts == 1){
-        this.endReached();
+        //this.gameOver();
       }
     }
-    
+  }
 
-
-
+  gameOver(){
+    this.stopTimer();
+    this.setState({ paused : false, disableButton : true, showBox: true });
   }
 
 
@@ -250,16 +255,17 @@ export default class App extends Component {
 
           <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
-            stopGame={this.endReached}
+            gameOver={this.gameOver}
             endReached={this.endReached}
             dataSource={this.state.dataSource[0]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.scoreKeeper}
+            <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
-            stopGame={this.endReached}
+            gameOver={this.gameOver}
+            
             dataSource={this.state.dataSource[1]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
@@ -267,7 +273,7 @@ export default class App extends Component {
 
           <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
-            stopGame={this.endReached}
+            gameOver={this.gameOver}
             dataSource={this.state.dataSource[2]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
@@ -275,11 +281,13 @@ export default class App extends Component {
 
           <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
-            stopGame={this.endReached}
+            gameOver={this.gameOver}
             dataSource={this.state.dataSource[3]}
             scrollPos={this.state.OffSet}
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
+
+
 
         </View>
 

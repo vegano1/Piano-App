@@ -8,12 +8,10 @@ import {
     Vibration
     
  } from 'react-native';
-
 import styles from '../Styles/Styles';
-import { InvertibleFlatList } from 'react-native-invertible-flatlist';
 
+var counter=0;
 export default class Scroll extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -21,6 +19,7 @@ export default class Scroll extends Component {
             dataSource: this.props.dataSource,
             paused : false,
             firstTile : false,
+            
         };
 
         this.renderItem = this.renderItem.bind(this);
@@ -33,20 +32,25 @@ export default class Scroll extends Component {
     
     componentWillReceiveProps(nextProps) {
         
+        // this.refs.FlatList.scrollToOffset({ offset: nextProps.scrollPos });
+
         this.setState({
             dataSource: nextProps.dataSource,
             paused : !nextProps.onPause,
-            firstTile : nextProps.firstTile
+            firstTile : nextProps.firstTile,
+            
+
         });
 
 
     }
 
     componentDidUpdate(props) {
-
-        this.refs.FlatList.scrollToOffset({ offset: this.props.scrollPos });
         
+    this.refs.FlatList.scrollToOffset({ offset: this.props.scrollPos });
+                
     }
+
 
     renderItem({ item, index }) {
         return (
@@ -96,7 +100,7 @@ export default class Scroll extends Component {
 
 
     startTile(item, index) {
-        if (item == 1 && index == 1) {
+        if (item == 1 && index == 1 && !this.state.firstTile) {
 
             return (
 
@@ -113,6 +117,7 @@ export default class Scroll extends Component {
                 >Start</Text>
             )
         }
+        
     }    
 
     handlePress(index) {
@@ -131,7 +136,7 @@ export default class Scroll extends Component {
                 
                 data.splice(index, 1, '2');
                 Vibration.vibrate([0, 500, 0, 500]);
-                this.props.stopGame();
+                this.props.gameOver();
             }
     
             else {
@@ -149,33 +154,36 @@ export default class Scroll extends Component {
     }
 
     missedTile({ changed }) {
-            
+        
         if(changed[0].isViewable==false && changed[0].item == '1' ){
             this.props.missedTile();
         } 
-        
+    
     }
+    
 
     render() {
         return (
+            
+                <FlatList
+                ref='FlatList'
+                inverted={true}
+                scrollEnabled={false}
+                //showsVerticalScrollIndicator={false}
+                removeClippedSubviews={true}
+                onViewableItemsChanged={this.missedTile}
+                onEndReached={this.props.endReached}
+                onEndReachedThreshold={0.08}
+                keyExtractor={(item, index) => index}
 
-            <InvertibleFlatList
-            ref='FlatList'
-            inverted={true}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            removeClippedSubviews={true}
-            onViewableItemsChanged={this.missedTile}
-            onEndReached={this.props.endReached}
-            onEndReachedThreshold={0.1}
-            keyExtractor={(item, index) => index}
+                data={this.state.dataSource}
+                extraData={this.state}
 
-            data={this.state.dataSource}
-            extraData={this.state}
+                renderItem={({item, index}) => 
+                this.renderItem({item,index})}
+                />
+            
 
-            renderItem={({item, index}) => 
-            this.renderItem({item,index})}
-            />
         )
     }
 };
