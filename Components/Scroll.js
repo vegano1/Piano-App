@@ -11,6 +11,7 @@ import {
 import styles from '../Styles/Styles';
 
 var counter=0;
+var pause = false;
 export default class Scroll extends Component {
     constructor(props) {
         super(props);
@@ -30,25 +31,25 @@ export default class Scroll extends Component {
     }
 
     
-    componentWillReceiveProps(nextProps) {
-        
-        // this.refs.FlatList.scrollToOffset({ offset: nextProps.scrollPos });
+    componentWillReceiveProps( nextProps) {
+        let props = {};
+        this.refs.FlatList.scrollToOffset({ offset: nextProps.scrollPos });
 
-        this.setState({
-            dataSource: nextProps.dataSource,
-            paused : !nextProps.onPause,
-            firstTile : nextProps.firstTile,
+        if(this.props.dataSource != nextProps.dataSource){
+            props.dataSource = nextProps.dataSource;
+        }
+        if(this.props.onPause != nextProps.onPause){
             
+            props.paused = !nextProps.onPause;   
+        }
+        if(this.props.firstTile != nextProps.firstTile){
+            props.firstTile = nextProps.firstTile;
+        }
 
-        });
+        if(Object.keys(props).length){
+            this.setState(props);
+        }
 
-
-    }
-
-    componentDidUpdate(props) {
-        
-    this.refs.FlatList.scrollToOffset({ offset: this.props.scrollPos });
-                
     }
 
 
@@ -169,11 +170,11 @@ export default class Scroll extends Component {
                 ref='FlatList'
                 inverted={true}
                 scrollEnabled={false}
-                //showsVerticalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 removeClippedSubviews={true}
                 onViewableItemsChanged={this.missedTile}
                 onEndReached={this.props.endReached}
-                onEndReachedThreshold={0.08}
+                onEndReachedThreshold={0.1}
                 keyExtractor={(item, index) => index}
 
                 data={this.state.dataSource}
@@ -182,6 +183,7 @@ export default class Scroll extends Component {
                 renderItem={({item, index}) => 
                 this.renderItem({item,index})}
                 />
+            
             
 
         )

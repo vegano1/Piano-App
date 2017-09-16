@@ -101,7 +101,7 @@ export default class App extends Component {
     this.setState({
       OffSet: this.state.OffSet + momentum,
     });
-    this.timer = setTimeout(this.scrollDown, 0.5);
+    this.timer = setTimeout(this.scrollDown, 40);
   }
 
    startStop() {
@@ -119,6 +119,7 @@ export default class App extends Component {
         this.stopTimer();
         this.setState({ paused: newValue, pausedSymbol: icon[3] });
       }
+      console.log(this.state.paused);
     }
   }
 
@@ -201,28 +202,22 @@ export default class App extends Component {
   }
 
   endReached() {
-    counter++;
-          
-    if(counter==2){
-        counter=0;
-      
-        let newDataSource = [];
-        let totalTiles = this.state.totalTiles;
-        let newGeneratedData = this.generateTiles(totalTiles-5);
-
-        for(let x = 0; x <= 3 ;x++){
-
-          let data = this.state.dataSource[x];
-          data.splice(0, totalTiles/2);
-          let finalTiles = data.splice(totalTiles/4,5);
-          data = finalTiles.concat(newGeneratedData[x]);
-          newDataSource.push(data);
-          
-        }
-        
-        this.setState({dataSource : newDataSource, OffSet:0});
-    }
     
+    let newDataSource = [];
+    let totalTiles = this.state.totalTiles;
+    let newGeneratedData = this.generateTiles(totalTiles-5);
+
+    for(let x = 0; x <= 3 ;x++){
+
+      let data = this.state.dataSource[x];
+      data.splice(0, totalTiles/2);
+      let finalTiles = data.splice(totalTiles/4,5);
+      data = finalTiles.concat(newGeneratedData[x]);
+      newDataSource.push(data);
+      
+    }
+    console.log(newDataSource);
+    this.setState({dataSource : newDataSource, OffSet:55});
   }
 
 
@@ -253,7 +248,7 @@ export default class App extends Component {
         <View style={{ flexDirection: 'row' }}>
           
 
-          <Scroll Action={this.scoreKeeper}
+            <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             gameOver={this.gameOver}
             endReached={this.endReached}
@@ -271,7 +266,7 @@ export default class App extends Component {
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.scoreKeeper}
+            <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             gameOver={this.gameOver}
             dataSource={this.state.dataSource[2]}
@@ -279,7 +274,7 @@ export default class App extends Component {
             missedTile={this.missedTile}
             firstTile = {this.state.firstTile} />
 
-          <Scroll Action={this.scoreKeeper}
+            <Scroll Action={this.scoreKeeper}
             onPause ={this.state.paused}
             gameOver={this.gameOver}
             dataSource={this.state.dataSource[3]}
