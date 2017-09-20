@@ -14,8 +14,9 @@ import MenuButton from './Components/Button';
 import Scroll from './Components/Scroll';
 import Modals from './Components/Modals';
 
+var debounce = require('lodash.debounce');
+
 var momentum = 1;
-var counter = 0;
 var icon = [
   require('./assets/icons/heart.png'),
   require('./assets/icons/restart.png'),
@@ -56,7 +57,9 @@ export default class App extends Component {
     this.resetGame = this.resetGame.bind(this);
     this.generateTiles = this.generateTiles.bind(this);
     this.scoreKeeper = this.scoreKeeper.bind(this);
-    this.endReached = this.endReached.bind(this);
+    this.endReached = debounce(this.endReached.bind(this),200,{
+      'leading': true,
+      'trailing': false});
     this.missedTile = this.missedTile.bind(this);
     this.gameOver = this.gameOver.bind(this);
   }
@@ -72,13 +75,13 @@ export default class App extends Component {
 
       momentum = momentum * 1.3; 
 
-      if (momentum > 50) {
-        momentum = 50;
+      if (momentum > 40) {
+        momentum = 40;
       }
 
       this.setState({ OffSet: this.state.OffSet - momentum });
 
-      this.timer = setTimeout(this.scrollUp, 10);
+      this.timer = setTimeout(this.scrollUp, 2);
 
       //To update the pos of scrollViewR on the screen
       //  this.setState({
@@ -99,7 +102,7 @@ export default class App extends Component {
       momentum = 20;
 
     this.setState({
-      OffSet: this.state.OffSet + momentum,
+      OffSet: this.state.OffSet + 20,
     });
     this.timer = setTimeout(this.scrollDown, 40);
   }
@@ -184,7 +187,7 @@ export default class App extends Component {
 
       let random = Math.floor(Math.random().toPrecision(2) * 3);
       dataSource[random][1] = '1';
-
+    console.log("generating....");
     return dataSource;
 
   }
@@ -201,23 +204,27 @@ export default class App extends Component {
     }
   }
 
-  endReached() {
+  endReached(info) {
     
-    let newDataSource = [];
-    let totalTiles = this.state.totalTiles;
-    let newGeneratedData = this.generateTiles(totalTiles-5);
-
-    for(let x = 0; x <= 3 ;x++){
-
-      let data = this.state.dataSource[x];
-      data.splice(0, totalTiles/2);
-      let finalTiles = data.splice(totalTiles/4,5);
-      data = finalTiles.concat(newGeneratedData[x]);
-      newDataSource.push(data);
+      console.log("endReached");
+      let newDataSource = [];
+      let totalTiles = this.state.totalTiles;
+      let newGeneratedData = this.generateTiles(totalTiles-5);
+      let oldData = JSON.parse(JSON.stringify(this.state.dataSource));
       
-    }
-    console.log(newDataSource);
-    this.setState({dataSource : newDataSource, OffSet:55});
+      for(let x = 0; x <= 3 ;x++){
+  
+        let data = oldData[x];
+        
+        data.splice(0, totalTiles/2);
+        let finalTiles = data.splice(totalTiles/4,5);
+        data = finalTiles.concat(newGeneratedData[x]);
+        newDataSource.push(data);
+        
+      }
+
+       this.setState({dataSource : newDataSource, OffSet : 55});
+    
   }
 
 
@@ -227,7 +234,7 @@ export default class App extends Component {
       Vibration.vibrate([0, 500]);
       this.setState({Hearts : this.state.Hearts - 1});
       if(this.state.Hearts == 1){
-        //this.gameOver();
+        this.gameOver();
       }
     }
   }
@@ -236,6 +243,8 @@ export default class App extends Component {
     this.stopTimer();
     this.setState({ paused : false, disableButton : true, showBox: true });
   }
+
+  
 
 
   render() {

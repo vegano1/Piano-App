@@ -5,13 +5,11 @@ import {
     Text, 
     TouchableNativeFeedback, 
     FlatList,
-    Vibration
+    Vibration,
     
  } from 'react-native';
 import styles from '../Styles/Styles';
 
-var counter=0;
-var pause = false;
 export default class Scroll extends Component {
     constructor(props) {
         super(props);
@@ -20,6 +18,7 @@ export default class Scroll extends Component {
             dataSource: this.props.dataSource,
             paused : false,
             firstTile : false,
+            generating : false,
             
         };
 
@@ -33,10 +32,12 @@ export default class Scroll extends Component {
     
     componentWillReceiveProps( nextProps) {
         let props = {};
-        this.refs.FlatList.scrollToOffset({ offset: nextProps.scrollPos });
+
 
         if(this.props.dataSource != nextProps.dataSource){
-            props.dataSource = nextProps.dataSource;
+        
+           props.dataSource = nextProps.dataSource;
+           
         }
         if(this.props.onPause != nextProps.onPause){
             
@@ -46,10 +47,12 @@ export default class Scroll extends Component {
             props.firstTile = nextProps.firstTile;
         }
 
+
         if(Object.keys(props).length){
+           
             this.setState(props);
         }
-
+        this.refs.FlatList.scrollToOffset({ offset: nextProps.scrollPos });
     }
 
 
@@ -123,34 +126,35 @@ export default class Scroll extends Component {
 
     handlePress(index) {
 
-        let data = this.props.dataSource;
-        if(!this.state.firstTile && index == 1 && data[index]== '1'){
-
-                data.splice(index, 1, '0');
-                Vibration.vibrate([0, 10]);
-                this.props.Action();
-            
-        }
-        else if(this.state.firstTile){
-
-            if (data[index] == '0') {
-                
-                data.splice(index, 1, '2');
-                Vibration.vibrate([0, 500, 0, 500]);
-                this.props.gameOver();
-            }
+            let data = this.props.dataSource;
+            if(!this.state.firstTile && index == 1 && data[index]== '1'){
     
-            else {
+                    data.splice(index, 1, '0');
+                    Vibration.vibrate([0, 10]);
+                    this.props.Action();
                 
-                data.splice(index, 1, '0');
-                Vibration.vibrate([0, 10]);
-                this.props.Action();
             }
-                
-            this.setState({
-                dataSource : data
-            });
-        }
+            else if(this.state.firstTile){
+    
+                if (data[index] == '0') {
+                    
+                    data.splice(index, 1, '2');
+                    Vibration.vibrate([0, 500, 0, 500]);
+                    this.props.gameOver();
+                }
+        
+                else {
+                    
+                    data.splice(index, 1, '0');
+                    Vibration.vibrate([0, 10]);
+                    this.props.Action();
+                }
+                    
+                this.setState({
+                    dataSource : data
+                });
+            }
+          
 
     }
 
@@ -161,7 +165,9 @@ export default class Scroll extends Component {
         } 
     
     }
-    
+
+ 
+
 
     render() {
         return (
@@ -173,7 +179,7 @@ export default class Scroll extends Component {
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews={true}
                 onViewableItemsChanged={this.missedTile}
-                onEndReached={this.props.endReached}
+                onEndReached={!this.state.generating && this.props.endReached}
                 onEndReachedThreshold={0.1}
                 keyExtractor={(item, index) => index}
 
