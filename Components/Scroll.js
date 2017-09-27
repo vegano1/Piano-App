@@ -10,6 +10,9 @@ import {
  } from 'react-native';
 import styles from '../Styles/Styles';
 
+
+
+
 export default class Scroll extends Component {
     constructor(props) {
         super(props);
@@ -20,13 +23,13 @@ export default class Scroll extends Component {
             firstTile : false,
             generating : false,
             
+            
         };
-
         this.renderItem = this.renderItem.bind(this);
         this.tileColor = this.tileColor.bind(this);
         this.startTile = this.startTile.bind(this);
         this.handlePress = this.handlePress.bind(this);
-        this.missedTile = this.missedTile.bind(this);
+        this.missedTile = this.missedTile.bind(this); 
     }
 
     
@@ -35,8 +38,8 @@ export default class Scroll extends Component {
 
 
         if(this.props.dataSource != nextProps.dataSource){
-        
-           props.dataSource = nextProps.dataSource;
+       
+            props.dataSource = nextProps.dataSource;
            
         }
         if(this.props.onPause != nextProps.onPause){
@@ -126,7 +129,7 @@ export default class Scroll extends Component {
 
     handlePress(index) {
 
-            let data = this.props.dataSource;
+            let data = this.state.dataSource;
             if(!this.state.firstTile && index == 1 && data[index]== '1'){
     
                     data.splice(index, 1, '0');
@@ -137,33 +140,46 @@ export default class Scroll extends Component {
             else if(this.state.firstTile){
     
                 if (data[index] == '0') {
-                    
-                    data.splice(index, 1, '2');
-                    Vibration.vibrate([0, 500, 0, 500]);
-                    this.props.gameOver();
+                    if(index < 16){
+                        
+                        data.splice(index, 1, '2');
+                        Vibration.vibrate([0, 500, 0, 500]);
+                        this.props.gameOver();
+                    }
+
                 }
         
                 else {
-                    
+
                     data.splice(index, 1, '0');
                     Vibration.vibrate([0, 10]);
                     this.props.Action();
+
                 }
+
+                if(index < 17){
                     
-                this.setState({
-                    dataSource : data
-                });
+                    this.setState({
+                        dataSource : data
+                    });
+                }
+
+
             }
           
 
     }
 
-    missedTile({ changed }) {
+    missedTile({viewableItems, changed}) {
         
         if(changed[0].isViewable==false && changed[0].item == '1' ){
-            this.props.missedTile();
-        } 
-    
+            this.props.missedTile();   
+        }  
+
+        if (viewableItems[2].index>15 && viewableItems[2].index<19){
+
+            this.setState({})          
+        }
     }
 
  

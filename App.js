@@ -45,6 +45,7 @@ export default class App extends Component {
       Hearts : 3,
       disableButton : false,
       showBox : false,
+      speed : 100,
 
     };
 
@@ -104,7 +105,7 @@ export default class App extends Component {
     this.setState({
       OffSet: this.state.OffSet + 20,
     });
-    this.timer = setTimeout(this.scrollDown, 40);
+    this.timer = setTimeout(this.scrollDown, this.state.speed);
   }
 
    startStop() {
@@ -122,7 +123,7 @@ export default class App extends Component {
         this.stopTimer();
         this.setState({ paused: newValue, pausedSymbol: icon[3] });
       }
-      console.log(this.state.paused);
+     
     }
   }
 
@@ -140,6 +141,7 @@ export default class App extends Component {
       OffSet: 0,
       score: 0,
       Hearts : 3,
+      speed : 100,
       dataSource: this.generateTiles(this.state.totalTiles)
     });
 
@@ -187,7 +189,6 @@ export default class App extends Component {
 
       let random = Math.floor(Math.random().toPrecision(2) * 3);
       dataSource[random][1] = '1';
-    console.log("generating....");
     return dataSource;
 
   }
@@ -196,8 +197,29 @@ export default class App extends Component {
 
     this.setState({ count: this.state.score++ });
 
+    if(this.state.score==20){
+      this.setState({speed : 80});
+    }
+    else if(this.state.score==50){
+      this.setState({speed : 60});
+    }
+    else if(this.state.score==100){
+      this.setState({speed : 40});
+    }
+    else if(this.state.score==200){
+      this.setState({speed : 30});
+    }
+    else if(this.state.score==300){
+      this.setState({speed : 20});
+    }
+    else if(this.state.score==400){
+      this.setState({speed : 10});
+    }
+    else if(this.state.score==500){
+      this.setState({speed : 5});
+    }
+
     if (!this.state.firstTile && this.state.paused) {
-      
       this.stopTimer();
       this.setState({ firstTile: true, pausedSymbol: icon[4], paused:true });
       this.scrollDown();
@@ -206,7 +228,6 @@ export default class App extends Component {
 
   endReached(info) {
     
-      console.log("endReached");
       let newDataSource = [];
       let totalTiles = this.state.totalTiles;
       let newGeneratedData = this.generateTiles(totalTiles-5);
