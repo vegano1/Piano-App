@@ -13,6 +13,7 @@ Tiles! is a game where you have to touch tiles to get the highest score. Built u
 - Reset to generate new tiles
 - Hit the wrong tile and its gameover!
 - Dont miss too many tiles either, or you will lose!
+- Gets harder as your score gets higher
 - Try and beat your high score!
 - Keep track of your score
 
